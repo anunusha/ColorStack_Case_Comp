@@ -116,6 +116,11 @@ export default function IntakeFlow({ audience }) {
   }
 
   function goNext() {
+    const nextAnswers = {
+      ...answers,
+      [currentQuestion.id]: currentAnswer,
+    };
+
     if (!isLastQuestion) {
       setCurrentIndex((previousIndex) => previousIndex + 1);
       return;
@@ -123,7 +128,7 @@ export default function IntakeFlow({ audience }) {
 
     sessionStorage.setItem(
       "taxbridge-intake",
-      JSON.stringify({ audience, answers })
+      JSON.stringify({ audience, answers: nextAnswers })
     );
     router.push("/results");
   }
