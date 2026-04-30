@@ -1,5 +1,9 @@
-import Link from "next/link";
 import CounterDisplay from "@/components/CounterDisplay";
+import AudienceCard from "@/components/AudienceCard";
+import PageShell from "@/components/PageShell";
+import SectionHeader from "@/components/SectionHeader";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const audienceCards = [
   {
@@ -26,87 +30,77 @@ const barriers = [
 
 export default function Landing() {
   return (
-    <main className="overflow-hidden">
-      <section className="mx-auto grid min-h-full max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
-        <div>
-          <p className="mb-5 w-fit rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
-            Free tax credit guidance for underserved Canadians
-          </p>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-6xl">
-            Find the tax credits you might be missing.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            TaxBridge asks simple questions, identifies likely credits and
-            refunds, and gives you a personalized checklist for what to gather
-            before filing.
-          </p>
+    <div className="overflow-hidden">
+      <PageShell className="py-16 lg:py-24">
+        <section className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="grid gap-10">
+            <SectionHeader
+              badge={
+                <Badge className="w-fit" variant="secondary">
+                  Free tax credit guidance for underserved Canadians
+                </Badge>
+              }
+              title="Find the tax credits you might be missing."
+              description="TaxBridge asks simple questions, identifies likely credits and refunds, and gives you a personalized checklist for what to gather before filing."
+            />
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {audienceCards.map((card) => (
-              <Link
-                className="group rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
-                href={card.href}
-                key={card.href}
-              >
-                <p className="text-sm font-semibold text-blue-700">
-                  {card.eyebrow}
-                </p>
-                <h2 className="mt-3 text-2xl font-bold text-slate-950">
-                  {card.title}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  {card.description}
-                </p>
-                <p className="mt-5 font-semibold text-blue-700">
-                  Start intake <span aria-hidden="true">-&gt;</span>
-                </p>
-              </Link>
-            ))}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {audienceCards.map((card) => (
+                <AudienceCard
+                  key={card.href}
+                  href={card.href}
+                  eyebrow={card.eyebrow}
+                  title={card.title}
+                  description={card.description}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-100/60">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-            Prototype impact
-          </p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-950">
-            Built to close the awareness gap.
-          </h2>
-          <p className="mt-4 leading-7 text-slate-600">
-            Many people miss credits because the system assumes they already
-            know the forms, lines, and benefit names. TaxBridge starts with
-            life situations instead.
-          </p>
-          <div className="mt-6">
-            <CounterDisplay />
-          </div>
-        </div>
-      </section>
+          <Card className="border-slate-200 shadow-xl shadow-slate-100/80">
+            <CardHeader className="gap-3">
+              <Badge className="w-fit" variant="secondary">
+                Prototype impact
+              </Badge>
+              <CardTitle className="text-3xl">
+                Built to close the awareness gap.
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <p className="leading-7 text-slate-600">
+                Many people miss credits because the system assumes they already
+                know the forms, lines, and benefit names. TaxBridge starts with
+                life situations instead.
+              </p>
+              <CounterDisplay />
+            </CardContent>
+          </Card>
+        </section>
+      </PageShell>
 
       <section className="bg-white px-6 py-14">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+            <Badge className="w-fit" variant="secondary">
               Why it helps
-            </p>
+            </Badge>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
               TaxBridge turns uncertainty into next steps.
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {barriers.map((barrier) => (
-              <div
-                className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
-                key={barrier}
-              >
-                <p className="font-semibold leading-7 text-slate-800">
-                  {barrier}
-                </p>
-              </div>
+              <Card className="border-slate-200 bg-slate-50" key={barrier}>
+                <CardContent className="p-5">
+                  <p className="font-semibold leading-7 text-slate-800">
+                    {barrier}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

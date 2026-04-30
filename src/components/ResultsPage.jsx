@@ -3,6 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import EmptyState from "@/components/EmptyState";
+import PageShell from "@/components/PageShell";
+import ResultCreditCard from "@/components/ResultCreditCard";
+import SectionHeader from "@/components/SectionHeader";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+
 const placeholderCredits = {
   student: [
     {
@@ -117,10 +126,16 @@ export default function ResultsPage() {
     }
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setIsLoading(false);
+      try {
+        setIsLoading(false);
+      } catch (error) {
+        setLoadError(error);
+        setIsLoading(false);
+      }
     }, 600);
 
     return () => window.clearTimeout(timeoutId);
@@ -141,162 +156,112 @@ export default function ResultsPage() {
 
   if (!intakeState && !isLoading) {
     return (
-      <main className="mx-auto flex min-h-full max-w-4xl flex-col px-6 py-16">
-        <div className="rounded-[2rem] border border-amber-100 bg-amber-50 p-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-amber-700">
-            No intake found
-          </p>
-          <h1 className="mt-3 text-3xl font-bold text-slate-950">
-            Start with a few questions first.
-          </h1>
-          <p className="mt-4 leading-7 text-slate-700">
-            Results are generated from answers stored only in this browser
-            session. Start a pathway to create your checklist.
-          </p>
-          <Link
-            className="mt-6 inline-flex rounded-full bg-blue-700 px-6 py-3 font-semibold text-white transition hover:bg-blue-800"
-            href="/"
-          >
-            Go to landing page
-          </Link>
-        </div>
-      </main>
+      <PageShell className="max-w-4xl">
+        <EmptyState
+          description="Results are generated from answers stored only in this browser session. Start a pathway to create your checklist."
+          primaryAction={{ href: "/", label: "Go to landing page" }}
+          title="Start with a few questions first."
+        />
+      </PageShell>
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-full max-w-6xl flex-col px-6 py-16">
-      <Link className="mb-8 text-sm font-semibold text-blue-700" href="/">
-        Back to home
-      </Link>
+    <PageShell>
+      <Button asChild className="mb-8 w-fit" variant="link">
+        <Link href="/">Back to home</Link>
+      </Button>
 
-      <section className="grid gap-8 lg:grid-cols-[1fr_0.6fr] lg:items-end">
-        <div>
-          <p className="mb-4 w-fit rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-            Results for {audienceLabels[intakeState?.audience] ?? "your pathway"}
-          </p>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950">
-            Your likely credits and next steps
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-            These are prototype estimates based on your answers. Review them
-            before filing and use the documents list as a starting checklist.
-          </p>
-        </div>
+      <div className="grid gap-8 lg:grid-cols-[1fr_0.6fr] lg:items-end">
+        <SectionHeader
+          badge={
+            <Badge className="w-fit" variant="secondary">
+              Results for {audienceLabels[intakeState?.audience] ?? "your pathway"}
+            </Badge>
+          }
+          title="Your likely credits and next steps"
+          description="These are prototype estimates based on your answers. Review them before filing and use the documents list as a starting checklist."
+        />
 
-        <div className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Estimated total surfaced
-          </p>
-          <p className="mt-3 text-4xl font-bold text-blue-800">
-            {isLoading ? "..." : formatCurrency(estimatedTotal)}
-          </p>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            Amounts are rough estimates for demo purposes, not guaranteed refund
-            values.
-          </p>
-        </div>
-      </section>
+        <Card className="shadow-sm">
+          <CardHeader className="gap-2">
+            <CardTitle className="text-base text-slate-600">
+              Estimated total surfaced
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-2">
+            <p className="text-4xl font-bold text-slate-900">
+              {isLoading ? "..." : formatCurrency(estimatedTotal)}
+            </p>
+            <p className="text-sm leading-6 text-slate-600">
+              Amounts are rough estimates for demo purposes, not guaranteed refund values.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
       {isLoading ? (
-        <section className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-lg font-semibold text-slate-900">
-            Matching credits and drafting plain-English explanations...
-          </p>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <Card className="mt-10 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              Matching credits and drafting plain-English explanations...
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
             {[1, 2].map((item) => (
-              <div
-                className="h-40 animate-pulse rounded-3xl bg-slate-100"
-                key={item}
-              />
+              <Skeleton className="h-40 rounded-xl" key={item} />
             ))}
-          </div>
-        </section>
+          </CardContent>
+        </Card>
+      ) : loadError ? (
+        <div className="mt-10">
+          <EmptyState
+            description="Something went wrong while generating your results in this browser session. You can safely try again."
+            primaryAction={{
+              href: `/intake/${intakeState?.audience ?? "student"}`,
+              label: "Retake intake",
+            }}
+            secondaryAction={{ href: "/", label: "Back to home" }}
+            title="We couldn't generate results."
+          />
+        </div>
       ) : eligibleCredits.length === 0 ? (
-        <section className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-2xl font-bold text-slate-950">
-            No strong matches yet.
-          </h2>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-600">
-            Your answers did not trigger the placeholder credit rules. You can
-            still file a tax return, review CRA guidance, or try the intake
-            again if something was answered incorrectly.
-          </p>
-          <Link
-            className="mt-6 inline-flex rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-800 transition hover:bg-slate-50"
-            href={`/intake/${intakeState?.audience ?? "student"}`}
-          >
-            Retake intake
-          </Link>
-        </section>
+        <div className="mt-10">
+          <EmptyState
+            description="Your answers did not trigger the placeholder credit rules. You can still file a return, review CRA guidance, or retake the intake if something was answered incorrectly."
+            primaryAction={{
+              href: `/intake/${intakeState?.audience ?? "student"}`,
+              label: "Retake intake",
+            }}
+            secondaryAction={{ href: "/", label: "Back to home" }}
+            title="No strong matches yet."
+          />
+        </div>
       ) : (
         <section className="mt-10 grid gap-5">
           {eligibleCredits.map((credit) => (
-            <article
-              className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm"
+            <ResultCreditCard
+              credit={credit}
+              formattedDollars={formatCurrency(credit.estimated_dollars)}
               key={credit.id}
-            >
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-                    Likely match
-                  </p>
-                  <h2 className="mt-2 text-2xl font-bold text-slate-950">
-                    {credit.name}
-                  </h2>
-                </div>
-                <p className="rounded-full bg-blue-50 px-4 py-2 text-lg font-bold text-blue-800">
-                  {formatCurrency(credit.estimated_dollars)}
-                </p>
-              </div>
-
-              <p className="mt-5 leading-7 text-slate-700">
-                {credit.fallback_explanation}
-              </p>
-
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="rounded-3xl bg-slate-50 p-5">
-                  <h3 className="font-semibold text-slate-950">
-                    Documents to gather
-                  </h3>
-                  <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-                    {credit.documents_needed.map((document) => (
-                      <li key={document}>- {document}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-3xl bg-slate-50 p-5">
-                  <h3 className="font-semibold text-slate-950">
-                    Where it goes
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
-                    {credit.filing_destination}
-                  </p>
-                </div>
-              </div>
-            </article>
+            />
           ))}
         </section>
       )}
 
-      <section className="mt-8 flex flex-col gap-3 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-slate-950">
-            Downloadable checklist
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            PDF generation will connect to Coder B&apos;s module during the
-            merge phase.
+      <Card className="mt-8 shadow-sm">
+        <CardHeader className="gap-2">
+          <CardTitle className="text-xl">Downloadable checklist</CardTitle>
+          <p className="text-sm leading-6 text-slate-600">
+            PDF generation will connect to Coder B&apos;s module during the merge phase.
           </p>
-        </div>
-        <button
-          className="rounded-full bg-slate-200 px-6 py-3 font-semibold text-slate-500"
-          disabled
-          type="button"
-        >
-          Download PDF soon
-        </button>
-      </section>
-    </main>
+        </CardHeader>
+        <CardContent>
+          <Button disabled variant="secondary">
+            Download PDF soon
+          </Button>
+        </CardContent>
+      </Card>
+    </PageShell>
   );
 }

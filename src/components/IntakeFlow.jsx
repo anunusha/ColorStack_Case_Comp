@@ -3,6 +3,14 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import PageShell from "@/components/PageShell";
+import QuestionCard from "@/components/QuestionCard";
+import SectionHeader from "@/components/SectionHeader";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+
 const questionSets = {
   student: [
     {
@@ -88,11 +96,13 @@ export default function IntakeFlow({ audience }) {
 
   if (questions.length === 0) {
     return (
-      <main className="mx-auto flex min-h-full max-w-4xl flex-col px-6 py-16">
-        <p className="rounded-3xl border border-red-100 bg-red-50 p-6 font-semibold text-red-700">
-          We do not have an intake flow for this audience yet.
-        </p>
-      </main>
+      <PageShell className="max-w-4xl">
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-6 font-semibold text-red-700">
+            We do not have an intake flow for this audience yet.
+          </CardContent>
+        </Card>
+      </PageShell>
     );
   }
 
@@ -134,96 +144,65 @@ export default function IntakeFlow({ audience }) {
   }
 
   return (
-    <main className="mx-auto flex min-h-full max-w-4xl flex-col px-6 py-16">
-      <button
-        className="mb-8 w-fit text-sm font-semibold text-blue-700"
-        onClick={() => router.push("/")}
-        type="button"
-      >
+    <PageShell className="max-w-4xl">
+      <Button className="mb-8 w-fit" onClick={() => router.push("/")} variant="link">
         Back to home
-      </button>
+      </Button>
 
-      <div className="mb-8">
-        <p className="mb-4 w-fit rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-          Intake for {audienceLabels[audience]}
-        </p>
-        <h1 className="text-4xl font-bold tracking-tight text-slate-950">
-          Answer a few plain-English questions.
-        </h1>
-        <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-          We will use your answers only in this browser session to estimate
-          which credits may be worth reviewing.
-        </p>
-      </div>
+      <SectionHeader
+        badge={
+          <Badge className="w-fit" variant="secondary">
+            Intake for {audienceLabels[audience]}
+          </Badge>
+        }
+        title="Answer a few plain-English questions."
+        description="We will use your answers only in this browser session to estimate which credits may be worth reviewing. Nothing is stored on a server."
+      />
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="mb-8">
-          <div className="mb-3 flex items-center justify-between gap-4 text-sm font-semibold text-slate-600">
-            <span>
-              Question {currentIndex + 1} of {questions.length}
-            </span>
-            <span>{Math.round(progressPercent)}%</span>
+      <Card className="mt-10 shadow-sm">
+        <CardContent className="grid gap-8 p-6 sm:p-8">
+          <div className="grid gap-3">
+            <div className="flex items-center justify-between gap-4 text-sm font-semibold text-[var(--color-muted-foreground)]">
+              <span>
+                Question {currentIndex + 1} of {questions.length}
+              </span>
+              <span>{Math.round(progressPercent)}%</span>
+            </div>
+            <Progress value={progressPercent} />
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-            <div
-              className="h-full rounded-full bg-blue-700 transition-all"
-              style={{ width: `${progressPercent}%` }}
-            />
+
+          <QuestionCard
+            helperText={currentQuestion.helper_text}
+            questionText={currentQuestion.question_text}
+          />
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {answerOptions.map((option) => {
+              const isSelected = currentAnswer === option.value;
+
+              return (
+                <Button
+                  className="h-auto justify-start rounded-xl px-5 py-6 text-left text-base"
+                  key={option.label}
+                  onClick={() => selectAnswer(option.value)}
+                  variant={isSelected ? "default" : "outline"}
+                >
+                  {option.label}
+                </Button>
+              );
+            })}
           </div>
-        </div>
 
-        <div className="rounded-3xl bg-slate-50 p-6">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-            TaxBridge asks
-          </p>
-          <h2 className="mt-3 text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">
-            {currentQuestion.question_text}
-          </h2>
-          <p className="mt-4 leading-7 text-slate-600">
-            {currentQuestion.helper_text}
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {answerOptions.map((option) => {
-            const isSelected = currentAnswer === option.value;
-
-            return (
-              <button
-                className={`rounded-2xl border p-5 text-left font-semibold transition ${
-                  isSelected
-                    ? "border-blue-700 bg-blue-700 text-white shadow-md"
-                    : "border-slate-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50"
-                }`}
-                key={option.label}
-                onClick={() => selectAnswer(option.value)}
-                type="button"
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
-          <button
-            className="rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={isFirstQuestion}
-            onClick={goBack}
-            type="button"
-          >
-            Back
-          </button>
-          <button
-            className="rounded-full bg-blue-700 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={currentAnswer === undefined}
-            onClick={goNext}
-            type="button"
-          >
-            {isLastQuestion ? "See my results" : "Next"}
-          </button>
-        </div>
-      </section>
-    </main>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+            <Button disabled={isFirstQuestion} onClick={goBack} variant="outline">
+              Back
+            </Button>
+            <Button disabled={currentAnswer === undefined} onClick={goNext}>
+              {isLastQuestion ? "See my results" : "Next"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </PageShell>
   );
 }
