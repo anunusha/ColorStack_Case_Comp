@@ -33,7 +33,7 @@ const barriers = [
 export default function Landing() {
   return (
     <PageShell className="gap-20 py-12 lg:py-20">
-      <section className="hero-banner grid gap-12 rounded-2xl border border-[var(--color-border)] p-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-10 xl:p-12">
+      <section className="hero-banner grid gap-12 rounded-2xl border-2 border-[var(--palette-black)] p-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-10 xl:p-12">
         <div className="grid gap-10">
           <SectionHeader
             badge={

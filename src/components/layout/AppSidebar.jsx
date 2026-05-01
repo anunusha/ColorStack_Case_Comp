@@ -97,7 +97,12 @@ export default function AppSidebar({ className }) {
         className
       )}
     >
-      <div className={cn("flex items-start justify-between pb-8", collapsed ? "px-1" : "px-3")}>
+      <div
+        className={cn(
+          "flex items-start justify-between pb-8",
+          collapsed ? "flex-col items-center gap-3 px-1" : "px-3"
+        )}
+      >
         <Link className="inline-block" href="/">
           <span className="font-brand text-2xl font-semibold tracking-tight text-[var(--color-foreground)]">
             {collapsed ? "TB" : "TaxBridge"}

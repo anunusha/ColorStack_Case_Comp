@@ -11,7 +11,7 @@ const badgeVariants = cva(
         default:
           "border-transparent bg-[var(--color-primary)] text-[var(--color-primary-foreground)]",
         secondary:
-          "border-transparent bg-[var(--color-secondary)] text-[var(--color-secondary-foreground)]",
+          "border-transparent bg-[var(--palette-cool-steel)] text-[var(--color-secondary-foreground)]",
         outline:
           "border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-card-foreground)]",
       },

@@ -1,6 +1,6 @@
 /**
  * TaxBridge palette (named tokens + semantic mapping).
- * Black #000000 · Platinum #eff1f3 · Rosy Granite #808089 · Electric Sapphire #5d6bea · Blush Rose #d96d7f
+ * Black #000000 · Platinum #eff1f3 · Rosy Granite #808089 · Electric Sapphire #5d6bea · Blush Rose #d96d7f · Cool Steel #92a9b5
  */
 
 :root {
@@ -9,6 +9,7 @@
   --palette-granite: #808089;
   --palette-sapphire: #5d6bea;
   --palette-blush: #d96d7f;
+  --palette-cool-steel: #92a9b5;
   --palette-white: #ffffff;
 
   /* Semantic */
