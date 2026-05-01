@@ -1,0 +1,263 @@
+[
+  {
+    "id": "paid_tuition_2024",
+    "audience": "student",
+    "order": 10,
+    "question_text": "Did you pay eligible tuition fees in 2024?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["tuition_credit", "canada_training_credit", "tuition_transfer", "tuition_carryforward"],
+    "ui_hints": {
+      "help_text": "Eligible tuition is usually shown on your T2202 form and must generally be at least $100 per institution."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "tuition_amount_paid",
+    "audience": "student",
+    "order": 20,
+    "question_text": "Roughly how much did you pay in eligible tuition?",
+    "answer_type": "number",
+    "required": true,
+    "conditional_on": { "question_id": "paid_tuition_2024", "answer_value": "yes" },
+    "affects_credits": ["tuition_credit", "tuition_transfer", "tuition_carryforward"],
+    "ui_hints": {
+      "placeholder": "Example: 6000",
+      "min": 0,
+      "help_text": "The federal tuition credit is usually estimated as 15% of eligible tuition."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_t2202",
+    "audience": "student",
+    "order": 30,
+    "question_text": "Did your school give you a T2202, or a TL11 form if studying abroad?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "paid_tuition_2024", "answer_value": "yes" },
+    "affects_credits": ["tuition_credit", "tuition_transfer", "tuition_carryforward", "canada_training_credit"],
+    "ui_hints": {
+      "help_text": "Canadian schools usually issue T2202 slips by the end of February through the student portal."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "studied_outside_canada",
+    "audience": "student",
+    "order": 40,
+    "question_text": "Did you study at an institution outside Canada in 2024?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["tuition_credit", "moving_expenses_deduction"],
+    "ui_hints": {
+      "help_text": "This matters for tuition eligibility rules, not whether you count as a student."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_tax_payable_2024",
+    "audience": "student",
+    "order": 50,
+    "question_text": "Did you have a refund or owe taxes in 2024? If you are not sure, did you have employment income or significant taxable scholarship income?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "got_refund", "label": "Got a refund" },
+      { "value": "owed_taxes", "label": "Owed taxes" },
+      { "value": "not_sure_with_income", "label": "Not sure, and I had employment or significant taxable scholarship income" },
+      { "value": "not_sure_low_income", "label": "Not sure, and I had little or no income" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["tuition_credit", "tuition_transfer", "tuition_carryforward"],
+    "ui_hints": {
+      "help_text": "A refund does not always mean you had no tax payable. Check Schedule 11 or your Notice of Assessment to confirm whether tuition credits were used."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "paid_student_loan_interest",
+    "audience": "student",
+    "order": 60,
+    "question_text": "Did you pay interest on a government student loan in 2024, or in any of the past 5 years?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["student_loan_interest_credit"],
+    "ui_hints": {
+      "help_text": "Interest on private bank lines of credit or personal loans does not qualify."
+    },
+    "follow_ups": ["student_loan_interest_amount"]
+  },
+  {
+    "id": "student_loan_interest_amount",
+    "audience": "student",
+    "order": 65,
+    "question_text": "Roughly how much eligible student loan interest did you pay? If unsure, leave this blank and we will point you to your NSLSC interest statement.",
+    "answer_type": "number",
+    "required": false,
+    "conditional_on": { "question_id": "paid_student_loan_interest", "answer_value": "yes" },
+    "affects_credits": ["student_loan_interest_credit"],
+    "ui_hints": {
+      "placeholder": "Example: 120",
+      "min": 0
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "moved_for_school",
+    "audience": "student",
+    "order": 70,
+    "question_text": "Did you move at least 40km closer to your school in 2024?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["moving_expenses_deduction"],
+    "ui_hints": {
+      "help_text": "Students may deduct moving expenses only if the move was at least 40km closer and other income rules are met."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "income_at_new_school_location",
+    "audience": "student",
+    "order": 80,
+    "question_text": "At your new school location, did you have any of the following?",
+    "answer_type": "multi_select",
+    "options": [
+      { "value": "taxable_scholarship", "label": "Taxable scholarship, bursary, fellowship, or research grant income" },
+      { "value": "employment_or_self_employment", "label": "Part-time job, co-op, or self-employment income" },
+      { "value": "neither", "label": "Neither" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "moved_for_school", "answer_value": "yes" },
+    "affects_credits": ["moving_expenses_deduction"],
+    "ui_hints": {
+      "help_text": "This is the common gotcha: moving expenses can only be deducted against eligible income connected to the new location."
+    },
+    "follow_ups": ["new_location_income_amount"]
+  },
+  {
+    "id": "new_location_income_amount",
+    "audience": "student",
+    "order": 85,
+    "question_text": "Roughly how much employment or self-employment income did you earn at the new school location?",
+    "answer_type": "number",
+    "required": false,
+    "conditional_on": { "question_id": "income_at_new_school_location", "answer_value": "employment_or_self_employment" },
+    "affects_credits": ["moving_expenses_deduction"],
+    "ui_hints": {
+      "placeholder": "Example: 3000",
+      "min": 0,
+      "help_text": "Moving expense deductions are capped by eligible income at the new location."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "age_19_or_older_by_april_2026",
+    "audience": "student",
+    "order": 90,
+    "question_text": "Will you be 19 or older by April 2026?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["gst_hst_credit", "file_to_register"],
+    "ui_hints": {
+      "help_text": "People turning 19 before April 2026 should file a 2024 return to be considered for the GST/HST credit."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "is_canadian_resident_for_tax",
+    "audience": "student",
+    "order": 100,
+    "question_text": "Are you a resident of Canada for tax purposes?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["gst_hst_credit", "tuition_credit"],
+    "ui_hints": {
+      "help_text": "Residency for tax purposes affects benefit eligibility. If unsure, CRA Form NR74 can help you determine status."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_canada_training_credit_limit",
+    "audience": "student",
+    "order": 110,
+    "question_text": "Have you accumulated a Canada Training Credit limit on your past CRA Notice of Assessment?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["canada_training_credit"],
+    "ui_hints": {
+      "help_text": "This is usually relevant for mature students age 26 to under 66. Check your latest CRA Notice of Assessment for your CTCL."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "province_of_residence_dec_31_2024",
+    "audience": "student",
+    "order": 120,
+    "question_text": "What province or territory did you live in on December 31, 2024?",
+    "answer_type": "dropdown",
+    "options": [
+      { "value": "AB", "label": "Alberta" },
+      { "value": "BC", "label": "British Columbia" },
+      { "value": "MB", "label": "Manitoba" },
+      { "value": "NB", "label": "New Brunswick" },
+      { "value": "NL", "label": "Newfoundland and Labrador" },
+      { "value": "NS", "label": "Nova Scotia" },
+      { "value": "NT", "label": "Northwest Territories" },
+      { "value": "NU", "label": "Nunavut" },
+      { "value": "ON", "label": "Ontario" },
+      { "value": "PE", "label": "Prince Edward Island" },
+      { "value": "QC", "label": "Quebec" },
+      { "value": "SK", "label": "Saskatchewan" },
+      { "value": "YT", "label": "Yukon" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["tuition_credit", "alberta_provincial_warning"],
+    "ui_hints": {
+      "help_text": "Province of residence on December 31 determines which provincial credits apply."
+    },
+    "follow_ups": []
+  }
+]

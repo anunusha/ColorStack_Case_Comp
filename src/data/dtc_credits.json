@@ -1,0 +1,440 @@
+[
+  {
+    "id": "dtc_marked_restriction",
+    "audience": "dtc",
+    "name": "Disability Tax Credit application: marked restriction pathway",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 1787,
+      "range_high": 3000,
+      "disclaimer": "Approximate annual federal plus possible provincial value. TaxBridge cannot determine eligibility; only CRA can approve a DTC application."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "restriction_severity_90_percent", "operator": "equals", "value": "yes" },
+        { "question_id": "inordinate_time_or_unable", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Form T2201 Disability Tax Credit Certificate",
+      "Medical practitioner details",
+      "Examples of how the restriction affects daily functioning"
+    ],
+    "filing_destination": "Apply for the DTC through CRA My Account or Form T2201 before claiming it on a tax return",
+    "fallback_explanation": "Your answers suggest it may be worth applying for the DTC under the marked restriction pathway. The CRA, not TaxBridge, decides eligibility after reviewing Form T2201 certified by a qualified medical practitioner.",
+    "ui_priority": 10,
+    "tags": ["dtc", "requires_application", "functional_limitation"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/segments/tax-credits-deductions-persons-disabilities/disability-tax-credit/eligible-dtc.html",
+    "maintenance_note": "DTC amounts and provincial supplements should be verified annually."
+  },
+  {
+    "id": "dtc_significant_restriction",
+    "audience": "dtc",
+    "name": "Disability Tax Credit application: cumulative effect pathway",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 1787,
+      "range_high": 3000,
+      "disclaimer": "Approximate annual federal plus possible provincial value. This is an application screen, not an eligibility decision."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "restriction_severity_90_percent", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Form T2201 Disability Tax Credit Certificate",
+      "Medical practitioner details",
+      "Notes on the combined effect of restrictions across daily activities"
+    ],
+    "filing_destination": "Apply for the DTC through CRA My Account or Form T2201 before claiming it on a tax return",
+    "fallback_explanation": "Your answers suggest it may be worth applying under the cumulative effect pathway, where two or more significant restrictions combine to create an effect similar to one marked restriction. CRA approval still depends on the certified Form T2201.",
+    "ui_priority": 20,
+    "tags": ["dtc", "requires_application", "cumulative_effect"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/segments/tax-credits-deductions-persons-disabilities/disability-tax-credit/eligible-dtc.html",
+    "maintenance_note": "DTC amounts and provincial supplements should be verified annually."
+  },
+  {
+    "id": "dtc_life_sustaining_therapy",
+    "audience": "dtc",
+    "name": "Disability Tax Credit application: life-sustaining therapy pathway",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 1787,
+      "range_high": 3000,
+      "disclaimer": "Approximate annual federal plus possible provincial value. CRA must approve Form T2201 before this can be claimed."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Form T2201 Disability Tax Credit Certificate",
+      "Medical practitioner certification of life-sustaining therapy",
+      "Records showing therapy time and frequency"
+    ],
+    "filing_destination": "Apply for the DTC through CRA My Account or Form T2201 before claiming it on a tax return",
+    "fallback_explanation": "Your answers suggest it may be worth applying under the life-sustaining therapy pathway. CRA rules include specific time and frequency tests, so bring clear therapy records to the practitioner completing Form T2201.",
+    "ui_priority": 30,
+    "tags": ["dtc", "requires_application", "life_sustaining_therapy"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/segments/tax-credits-deductions-persons-disabilities/disability-tax-credit/eligible-dtc.html",
+    "maintenance_note": "DTC life-sustaining therapy criteria should be checked if rules change."
+  },
+  {
+    "id": "dtc_retroactive_potential",
+    "audience": "dtc",
+    "name": "Potential retroactive DTC refund",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "range",
+      "calculation": "years_with_condition * 2800",
+      "range_low": 0,
+      "range_high": 0,
+      "disclaimer": "This is only useful if you or a supporting family member had federal tax payable in those years. Actual refunds vary widely."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "years_with_condition", "operator": "greater_than", "value": 0 },
+        { "question_id": "had_tax_payable_in_recent_years", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Approved Form T2201",
+      "Notice of Assessment for each year you want reassessed",
+      "CRA My Account access or Form T1-ADJ"
+    ],
+    "filing_destination": "After T2201 approval, request reassessment through CRA My Account or Form T1-ADJ",
+    "fallback_explanation": "If your DTC application is approved, CRA may reassess up to 10 previous tax years. Whether that creates a refund depends on whether you or a supporting family member had tax payable in those years, so this should be treated as potential, not guaranteed money.",
+    "ui_priority": 5,
+    "tags": ["dtc", "retroactive", "high_impact", "alberta_specific"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/segments/tax-credits-deductions-persons-disabilities/disability-tax-credit/how-apply-dtc.html",
+    "maintenance_note": "Per-year value estimate based on Alberta adult examples; verify annually."
+  },
+  {
+    "id": "dtc_child_supplement",
+    "audience": "dtc",
+    "name": "DTC child supplement",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 5914,
+      "disclaimer": "Maximum supplement estimate; actual value depends on tax payable and family circumstances."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "applying_for_self_or_other", "operator": "equals", "value": "my_child_under_18" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Approved Form T2201 for the child",
+      "Parent or guardian tax return information",
+      "Canada Child Benefit account details"
+    ],
+    "filing_destination": "DTC claim for a child under 18 after CRA approves Form T2201",
+    "fallback_explanation": "If a child under 18 is approved for the DTC, the family may be able to claim the DTC child supplement. This is separate from the Child Disability Benefit and depends on CRA approval and the family tax situation.",
+    "ui_priority": 40,
+    "tags": ["dtc", "child", "federal"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/child-disability-benefit.html",
+    "maintenance_note": "Child-related benefit amounts are indexed and should be verified annually."
+  },
+  {
+    "id": "child_disability_benefit",
+    "audience": "dtc",
+    "name": "Child Disability Benefit",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 3411,
+      "disclaimer": "Current maximum for July 2025 to June 2026 per CRA; actual amount depends on family net income."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "applying_for_self_or_other", "operator": "equals", "value": "my_child_under_18" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Approved Form T2201 for the child",
+      "Canada Child Benefit eligibility information",
+      "Filed tax returns for the parent or guardian"
+    ],
+    "filing_destination": "CRA administers the Child Disability Benefit through the Canada Child Benefit system after DTC approval",
+    "fallback_explanation": "If your child is approved for the DTC, your family may also receive the Child Disability Benefit through the Canada Child Benefit system. The amount changes by benefit year and depends on family income.",
+    "ui_priority": 45,
+    "tags": ["child_disability_benefit", "child", "refundable_benefit"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/child-disability-benefit.html",
+    "maintenance_note": "Verify Child Disability Benefit amounts each benefit year."
+  },
+  {
+    "id": "dtc_transfer_to_supporter",
+    "audience": "dtc",
+    "name": "Transfer disability amount to a supporting family member",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 3000,
+      "disclaimer": "Potential value depends on the supporting family member's tax payable and province."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "had_tax_payable_in_recent_years", "operator": "includes", "value": ["no", "unsure"] }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Approved Form T2201",
+      "Supporting family member's tax information",
+      "Records showing support relationship"
+    ],
+    "filing_destination": "Line 31800 for disability amount transferred from a dependant, if applicable",
+    "fallback_explanation": "If you are approved for the DTC but cannot use the full amount yourself, a supporting family member may be able to claim a transferred disability amount. This depends on the relationship, support facts, and their tax payable.",
+    "ui_priority": 50,
+    "tags": ["dtc", "transfer", "supporter"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-31800-disability-amount-transferred-a-dependant.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "rdsp_unlock",
+    "audience": "dtc",
+    "name": "Registered Disability Savings Plan unlock",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 4500,
+      "disclaimer": "Annual grant and bond potential; lifetime government contributions can be much higher. Actual amount depends on contributions, income, and RDSP rules."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "interested_in_rdsp", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Approved Form T2201",
+      "SIN",
+      "Bank or financial institution RDSP application requirements"
+    ],
+    "filing_destination": "Open an RDSP through a participating financial institution after DTC approval",
+    "fallback_explanation": "DTC approval is required to open an RDSP. The RDSP can unlock government grants and bonds, and in Alberta RDSP funds are generally exempt from AISH income calculations.",
+    "ui_priority": 15,
+    "tags": ["rdsp", "dtc", "high_impact", "alberta_specific"],
+    "cra_source_url": "https://www.canada.ca/en/employment-social-development/programs/disability/savings/how-much.html",
+    "maintenance_note": "RDSP grant and bond amounts should be verified annually."
+  },
+  {
+    "id": "cwb_disability_supplement",
+    "audience": "dtc",
+    "name": "Possible Canada Workers Benefit disability supplement",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Possibly eligible only. CRA income, province, family-status, and full-time-student exclusion rules must be checked."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "had_employment_income_2024", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Employment or self-employment income records",
+      "Approved DTC status",
+      "CRA CWB eligibility information"
+    ],
+    "filing_destination": "Canada Workers Benefit section of the T1 return, if CRA criteria are met",
+    "fallback_explanation": "Because you had work income, the Canada Workers Benefit disability supplement may be worth checking after DTC approval. This is not automatic: CRA applies income, province, family-status, and full-time-student exclusion rules.",
+    "ui_priority": 70,
+    "tags": ["cwb", "possibly_eligible", "work_income"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-workers-benefit.html",
+    "maintenance_note": "CWB amounts and thresholds change and should be verified annually."
+  },
+  {
+    "id": "find_practitioner_first",
+    "audience": "dtc",
+    "name": "Find a qualified practitioner first",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Procedural step. A practitioner must certify Form T2201 before CRA can decide."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "has_impairment_12_months", "operator": "equals", "value": "yes" },
+        { "question_id": "has_qualified_practitioner", "operator": "equals", "value": "no" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "significant" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "unsure" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "List of current treatments, medications, and assistive devices",
+      "Daily functioning examples",
+      "Contact information for a doctor, nurse practitioner, or other eligible certifier"
+    ],
+    "filing_destination": "Start Part A through CRA My Account or by phone, then have a practitioner complete Part B",
+    "fallback_explanation": "The biggest next step is finding a qualified practitioner who can certify the right section of Form T2201. Nurse practitioners can certify all sections, and disability advocacy organizations may be able to help you prepare.",
+    "ui_priority": 8,
+    "tags": ["procedural", "practitioner", "dtc_application"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/segments/tax-credits-deductions-persons-disabilities/disability-tax-credit/dtc-before.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "consider_reapplication_federal",
+    "audience": "dtc",
+    "name": "Consider re-screening after federal DTC rule changes",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Reapplication guidance only. CRA still decides based on current certification and review."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "previously_denied", "operator": "equals", "value": "yes" },
+        { "question_id": "denial_year", "operator": "equals", "value": "before_2022" }
+      ],
+      "any_of": [
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "marked" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "life_sustaining_therapy" },
+        { "question_id": "category_of_restriction", "operator": "includes", "value": "unsure" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Previous DTC denial letter if available",
+      "Updated medical information",
+      "Current Form T2201"
+    ],
+    "filing_destination": "Review current CRA DTC eligibility rules and consider a new Form T2201 application",
+    "fallback_explanation": "Because your denial was before 2022, it may be worth re-screening under updated DTC criteria, especially for mental functions or life-sustaining therapy. This does not mean approval is guaranteed; CRA still relies on current medical certification.",
+    "ui_priority": 60,
+    "tags": ["reapplication", "federal", "dtc"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/news/cra-multimedia-library/individuals-video-gallery/medical-practitioners-learn-eligibility-changes-dtc.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "aish_reapplication_required",
+    "audience": "dtc",
+    "name": "AISH DTC reapplication requirement",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Alberta-specific procedural warning."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "previously_denied", "operator": "equals", "value": "yes" },
+        { "question_id": "currently_receives_disability_benefits", "operator": "includes", "value": "aish" }
+      ],
+      "any_of": [
+        { "question_id": "denial_year", "operator": "equals", "value": "before_2022" },
+        { "question_id": "denial_year", "operator": "equals", "value": "2022_to_2024" }
+      ],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Previous DTC denial letter if available",
+      "AISH correspondence",
+      "Updated Form T2201 application materials"
+    ],
+    "filing_destination": "Follow Alberta guidance for AISH recipients applying for federal disability supports",
+    "fallback_explanation": "Alberta states that AISH recipients denied DTC eligibility before 2025 are required to reapply because federal eligibility criteria changed. This is separate from whether CRA ultimately approves the DTC application.",
+    "ui_priority": 25,
+    "tags": ["aish", "alberta_specific", "procedural"],
+    "cra_source_url": "https://www.alberta.ca/aish-apply-for-federal-disability-supports",
+    "maintenance_note": "Alberta AISH policy should be rechecked if deadlines change."
+  },
+  {
+    "id": "aish_cdb_warning",
+    "audience": "dtc",
+    "name": "AISH and Canada Disability Benefit warning",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Alberta-specific informational warning. Do not present the adult CDB as additive monthly income for AISH recipients."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "currently_receives_disability_benefits", "operator": "includes", "value": "aish" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "AISH notices",
+      "Canada Disability Benefit application status if applicable",
+      "DTC application status"
+    ],
+    "filing_destination": "Review Alberta's AISH federal disability supports guidance",
+    "fallback_explanation": "For AISH recipients: Alberta requires you to apply for federal disability supports including the Canada Disability Benefit and DTC pathway. Per Alberta government policy, if your CDB application decision has not been made by February 28, 2026, $200 in CDB income will be reduced from your AISH benefits starting April 2026. The CDB is treated as exempt income only for AISH recipients eligible for the Modified Living Allowance. Applying for the DTC may still help with retroactive tax refunds and RDSP access, but TaxBridge cannot promise your monthly income will increase.",
+    "ui_priority": 1,
+    "tags": ["aish", "cdb", "alberta_specific", "warning"],
+    "cra_source_url": "https://www.alberta.ca/aish-apply-for-federal-disability-supports",
+    "maintenance_note": "Uses Alberta wording and dates from the v5 source; verify before future use."
+  }
+]

@@ -1,0 +1,277 @@
+[
+  {
+    "id": "tuition_credit",
+    "audience": "student",
+    "name": "Tuition Tax Credit",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "tuition_amount_paid * 0.15",
+      "disclaimer": "Federal estimate only. Provincial supplement varies by province; do not estimate the provincial portion for Alberta, Ontario, or Saskatchewan."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "paid_tuition_2024", "operator": "equals", "value": "yes" },
+        { "question_id": "tuition_amount_paid", "operator": "greater_than", "value": 100 },
+        { "question_id": "has_t2202", "operator": "equals", "value": "yes" },
+        { "question_id": "had_tax_payable_2024", "operator": "includes", "value": ["owed_taxes", "got_refund", "not_sure_with_income"] }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 form from your school, or TL11 form if studying abroad",
+      "Tuition payment receipts for your records",
+      "Schedule 11 from your tax software or return"
+    ],
+    "filing_destination": "Line 32300 of your T1 return; complete Schedule 11",
+    "fallback_explanation": "If you paid eligible tuition fees in 2024, you may be able to claim a non-refundable federal credit worth 15% of those fees. A refund does not automatically mean your tuition credits were unused, so check Schedule 11 or your Notice of Assessment. Alberta, Ontario, and Saskatchewan do not currently add a provincial tuition credit for 2024.",
+    "ui_priority": 10,
+    "tags": ["education", "non_refundable", "federal_and_provincial"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts.html",
+    "maintenance_note": "Provincial tuition rules should be re-verified each tax year."
+  },
+  {
+    "id": "tuition_transfer",
+    "audience": "student",
+    "name": "Transfer unused tuition to a parent, grandparent, spouse, or common-law partner",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "min(tuition_amount_paid * 0.15, 750)",
+      "disclaimer": "Estimate only. The federal transfer is based on up to $5,000 of current-year tuition amounts after reducing your own tax first."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "paid_tuition_2024", "operator": "equals", "value": "yes" },
+        { "question_id": "tuition_amount_paid", "operator": "greater_than", "value": 0 },
+        { "question_id": "has_t2202", "operator": "equals", "value": "yes" },
+        { "question_id": "had_tax_payable_2024", "operator": "includes", "value": ["not_sure_low_income"] }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 or TL11 form",
+      "Completed Schedule 11 showing the transferable amount",
+      "Name and SIN of the person receiving the transfer if required by tax software"
+    ],
+    "filing_destination": "Schedule 11; transferred amount is claimed by the supporting person",
+    "fallback_explanation": "If you paid tuition but did not need the full credit to reduce your own tax, you may be able to transfer part of the current-year amount to a parent, grandparent, spouse, or common-law partner. The transfer is limited, and you must first use tuition to reduce your own tax payable.",
+    "ui_priority": 20,
+    "tags": ["education", "transfer", "non_refundable"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts/transferring-carrying-forward-amounts.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "tuition_carryforward",
+    "audience": "student",
+    "name": "Carry forward unused tuition",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "tuition_amount_paid * 0.15",
+      "disclaimer": "Estimate only. Actual carryforward depends on how much tuition was used or transferred on Schedule 11."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "paid_tuition_2024", "operator": "equals", "value": "yes" },
+        { "question_id": "tuition_amount_paid", "operator": "greater_than", "value": 0 },
+        { "question_id": "has_t2202", "operator": "equals", "value": "yes" },
+        { "question_id": "had_tax_payable_2024", "operator": "includes", "value": ["not_sure_low_income"] }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 or TL11 form",
+      "Schedule 11",
+      "Notice of Assessment showing unused tuition amounts"
+    ],
+    "filing_destination": "Schedule 11 and future-year tax returns",
+    "fallback_explanation": "If you do not need all your 2024 tuition credit this year, unused amounts can usually be carried forward and used in a later year. Your Notice of Assessment will show the amount available for future years.",
+    "ui_priority": 30,
+    "tags": ["education", "carryforward", "non_refundable"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts/transferring-carrying-forward-amounts.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "student_loan_interest_credit",
+    "audience": "student",
+    "name": "Student Loan Interest Credit",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "student_loan_interest_amount * 0.15",
+      "disclaimer": "Federal estimate only if you entered an amount. Interest on private loans, bank lines of credit, renegotiated loans, or consolidated loans is not eligible."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "paid_student_loan_interest", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Student loan interest statement from NSLSC or your provincial loan provider",
+      "Records for eligible interest paid in 2024 or the previous five years"
+    ],
+    "filing_destination": "Line 31900 of your T1 return",
+    "fallback_explanation": "You may be able to claim eligible interest paid on a government student loan in 2024 or the previous five years. This does not apply to private bank loans or lines of credit, and federal student loans stopped charging interest as of April 1, 2023.",
+    "ui_priority": 40,
+    "tags": ["education", "student_loans", "non_refundable"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-31900-interest-paid-on-your-student-loans.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "moving_expenses_deduction",
+    "audience": "student",
+    "name": "Moving Expenses Deduction",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Deduction amount depends on eligible moving costs and eligible income at the new school location."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "moved_for_school", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [
+        { "question_id": "income_at_new_school_location", "operator": "includes", "value": "taxable_scholarship" },
+        { "question_id": "income_at_new_school_location", "operator": "includes", "value": "employment_or_self_employment" }
+      ],
+      "none_of": [
+        { "question_id": "income_at_new_school_location", "operator": "includes", "value": "neither" }
+      ]
+    },
+    "documents_needed": [
+      "Receipts for travel, movers, temporary lodging, and other eligible moving costs",
+      "Proof of eligible income at the new school location",
+      "Form T1-M"
+    ],
+    "filing_destination": "Line 21900 of your T1 return; complete Form T1-M",
+    "fallback_explanation": "If you moved at least 40km closer to school, you may be able to deduct moving expenses, but only against eligible taxable scholarship or employment income at the new location. Many full-time students do not qualify for this deduction in the year of the move.",
+    "ui_priority": 50,
+    "tags": ["moving", "deduction", "gotcha"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-21900-moving-expenses/you-claim-moving-expenses-6.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "gst_hst_credit",
+    "audience": "student",
+    "name": "GST/HST Credit",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 533,
+      "disclaimer": "Approximate maximum for a single person; actual amount depends on income, family status, and the benefit year."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "age_19_or_older_by_april_2026", "operator": "equals", "value": "yes" },
+        { "question_id": "is_canadian_resident_for_tax", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Filed 2024 tax return",
+      "CRA My Account access or mailing address kept current",
+      "Form RC151 if you became a resident of Canada during the year"
+    ],
+    "filing_destination": "File a 2024 tax return; CRA assesses GST/HST credit eligibility automatically for most filers",
+    "fallback_explanation": "If you are a Canadian resident for tax purposes and will be 19 by the relevant benefit period, filing your 2024 return can register you for the GST/HST credit. This can matter even if you had little or no income.",
+    "ui_priority": 60,
+    "tags": ["refundable", "benefit", "file_even_with_no_income"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4210/gst-hst-credit.html",
+    "maintenance_note": "GST/HST amounts and thresholds should be verified each benefit year."
+  },
+  {
+    "id": "canada_training_credit",
+    "audience": "student",
+    "name": "Canada Training Credit",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "fixed",
+      "value": 250,
+      "disclaimer": "Maximum annual refundable credit. Actual amount depends on your Canada Training Credit Limit and eligible tuition."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "paid_tuition_2024", "operator": "equals", "value": "yes" },
+        { "question_id": "has_t2202", "operator": "equals", "value": "yes" },
+        { "question_id": "has_canada_training_credit_limit", "operator": "equals", "value": "yes" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 or eligible tuition receipt",
+      "Notice of Assessment showing your Canada Training Credit Limit"
+    ],
+    "filing_destination": "Line 45350 of your T1 return",
+    "fallback_explanation": "If you have a Canada Training Credit Limit on your Notice of Assessment and paid eligible tuition, you may be able to claim a refundable credit. This is most relevant for mature students, because the limit generally starts accumulating at age 26.",
+    "ui_priority": 70,
+    "tags": ["education", "refundable", "mature_students"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-45350-canada-training-credit.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "file_to_register",
+    "audience": "student",
+    "name": "File a return to register for future benefits",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "No immediate estimate. Filing can help CRA determine future benefit eligibility."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "age_19_or_older_by_april_2026", "operator": "equals", "value": "no" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "SIN",
+      "Mailing address",
+      "Any slips you received, even if income was low"
+    ],
+    "filing_destination": "File a 2024 tax return even with little or no income",
+    "fallback_explanation": "Even if you are not old enough for the GST/HST credit yet, filing a return helps CRA have your information ready for future benefit payments. This is often worth doing even with little or no income.",
+    "ui_priority": 80,
+    "tags": ["procedural", "benefits", "file_even_with_no_income"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/gst-hst-credit/who-eligible.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "alberta_provincial_warning",
+    "audience": "student",
+    "name": "Alberta provincial tuition credit warning",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "Informational flag only."
+    },
+    "eligibility_rules": {
+      "all_of": [
+        { "question_id": "province_of_residence_dec_31_2024", "operator": "equals", "value": "AB" }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Notice of Assessment if you have older unused provincial tuition amounts"
+    ],
+    "filing_destination": "Review your provincial tax form and Notice of Assessment",
+    "fallback_explanation": "Alberta eliminated its provincial tuition and education tax credits for 2020 and later tax years. You can still claim the federal tuition credit, but TaxBridge should not add an Alberta provincial tuition estimate for 2024.",
+    "ui_priority": 90,
+    "tags": ["alberta_specific", "provincial", "warning"],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/p105/p105-students-income-tax.html",
+    "maintenance_note": "Alberta tuition rules should be re-verified if this tool is maintained beyond tax year 2024."
+  }
+]

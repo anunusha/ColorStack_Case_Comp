@@ -1,0 +1,278 @@
+[
+  {
+    "id": "has_impairment_12_months",
+    "audience": "dtc",
+    "order": 10,
+    "question_text": "Have you had a physical or mental health condition that has lasted, or is expected to last, at least 12 months?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["dtc_marked_restriction", "dtc_significant_restriction", "dtc_life_sustaining_therapy"],
+    "ui_hints": {
+      "help_text": "CRA calls this the prolonged impairment requirement."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "category_of_restriction",
+    "audience": "dtc",
+    "order": 20,
+    "question_text": "Which of these best describes how your condition affects you?",
+    "answer_type": "multi_select",
+    "options": [
+      { "value": "marked", "label": "Markedly restricts at least one daily activity" },
+      { "value": "significant", "label": "Significantly restricts two or more daily activities, with combined effect equivalent to one major restriction" },
+      { "value": "life_sustaining_therapy", "label": "Requires ongoing therapy at least 14 hours/week to support a vital function" },
+      { "value": "none", "label": "None of the above" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_marked_restriction", "dtc_significant_restriction", "dtc_life_sustaining_therapy", "consider_reapplication_federal"],
+    "ui_hints": {
+      "help_text": "CRA focuses on daily functioning, not the diagnosis name."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "restriction_severity_90_percent",
+    "audience": "dtc",
+    "order": 30,
+    "question_text": "When the restriction is present, is it present all or almost all the time, roughly 90% of your day, every day?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_marked_restriction", "dtc_significant_restriction"],
+    "ui_hints": {
+      "help_text": "CRA uses the phrase all or almost all of the time."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "inordinate_time_or_unable",
+    "audience": "dtc",
+    "order": 40,
+    "question_text": "Even with treatment, medication, or assistive devices, are you unable to do the activity, or does it take you significantly longer than someone without the condition?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_marked_restriction"],
+    "ui_hints": {
+      "help_text": "CRA considers whether the activity takes an inordinate amount of time, often described as about three times as long."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "years_with_condition",
+    "audience": "dtc",
+    "order": 50,
+    "question_text": "How many years have you had this condition?",
+    "answer_type": "number",
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_retroactive_potential"],
+    "ui_hints": {
+      "placeholder": "Max 10",
+      "min": 0,
+      "max": 10,
+      "help_text": "CRA may reassess prior years after approval, but refunds depend on tax payable."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_qualified_practitioner",
+    "audience": "dtc",
+    "order": 60,
+    "question_text": "Do you have a doctor, nurse practitioner, psychologist, optometrist, audiologist, occupational therapist, physiotherapist, or speech-language pathologist who knows your condition well?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["find_practitioner_first"],
+    "ui_hints": {
+      "help_text": "Nurse practitioners can certify all DTC sections, which matters if you do not have a family doctor."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_tax_payable_in_recent_years",
+    "audience": "dtc",
+    "order": 70,
+    "question_text": "In any of the past 10 years, did you, or could a family member who supported you, have owed federal income tax?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" },
+      { "value": "unsure", "label": "Unsure" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_retroactive_potential", "dtc_self_claim", "dtc_transfer_to_supporter", "rdsp_unlock"],
+    "ui_hints": {
+      "help_text": "The DTC is non-refundable, but it may be transferable to a supporting family member."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "interested_in_rdsp",
+    "audience": "dtc",
+    "order": 80,
+    "question_text": "Would you like to learn about the Registered Disability Savings Plan (RDSP)? It is a savings plan where the government can contribute grants and bonds, even if you cannot contribute yourself.",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["rdsp_unlock"],
+    "ui_hints": {
+      "help_text": "DTC approval is required to open an RDSP."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "applying_for_self_or_other",
+    "audience": "dtc",
+    "order": 90,
+    "question_text": "Are you applying for yourself, for a child under 18, or for another adult you support?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "myself", "label": "Myself" },
+      { "value": "my_child_under_18", "label": "My child under 18" },
+      { "value": "another_adult_i_support", "label": "Another adult I support" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "has_impairment_12_months", "answer_value": "yes" },
+    "affects_credits": ["dtc_child_supplement", "child_disability_benefit", "dtc_transfer_to_supporter"],
+    "ui_hints": {
+      "help_text": "Child and dependent claims have different guidance from adult self-claims."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "province_of_residence",
+    "audience": "dtc",
+    "order": 100,
+    "question_text": "What province or territory do you live in?",
+    "answer_type": "dropdown",
+    "options": [
+      { "value": "AB", "label": "Alberta" },
+      { "value": "BC", "label": "British Columbia" },
+      { "value": "MB", "label": "Manitoba" },
+      { "value": "NB", "label": "New Brunswick" },
+      { "value": "NL", "label": "Newfoundland and Labrador" },
+      { "value": "NS", "label": "Nova Scotia" },
+      { "value": "NT", "label": "Northwest Territories" },
+      { "value": "NU", "label": "Nunavut" },
+      { "value": "ON", "label": "Ontario" },
+      { "value": "PE", "label": "Prince Edward Island" },
+      { "value": "Quebec", "label": "Quebec" },
+      { "value": "SK", "label": "Saskatchewan" },
+      { "value": "YT", "label": "Yukon" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["dtc_marked_restriction", "dtc_significant_restriction", "dtc_life_sustaining_therapy", "aish_cdb_warning"],
+    "ui_hints": {
+      "help_text": "Province affects supplement estimates and Alberta-specific AISH/CDB messaging."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "currently_receives_disability_benefits",
+    "audience": "dtc",
+    "order": 110,
+    "question_text": "Do you currently receive any of these?",
+    "answer_type": "multi_select",
+    "options": [
+      { "value": "aish", "label": "AISH (Alberta)" },
+      { "value": "cpp_d", "label": "CPP-D (Canada Pension Plan disability)" },
+      { "value": "provincial_disability_assistance", "label": "Provincial disability assistance (other provinces)" },
+      { "value": "workers_compensation", "label": "Workers' compensation" },
+      { "value": "private_disability_insurance", "label": "Private disability insurance" },
+      { "value": "cdb", "label": "Canada Disability Benefit (CDB)" },
+      { "value": "none", "label": "None" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["aish_cdb_warning", "aish_reapplication_required"],
+    "ui_hints": {
+      "help_text": "Other disability benefits do not automatically make you DTC-eligible, and not receiving them does not disqualify you."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "previously_denied",
+    "audience": "dtc",
+    "order": 120,
+    "question_text": "Have you applied for the DTC before and been denied?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["consider_reapplication_federal", "aish_reapplication_required"],
+    "ui_hints": {
+      "help_text": "Rules changed federally in 2022 and Alberta has specific reapplication rules for some AISH recipients."
+    },
+    "follow_ups": ["denial_year"]
+  },
+  {
+    "id": "denial_year",
+    "audience": "dtc",
+    "order": 125,
+    "question_text": "When was your DTC denial?",
+    "answer_type": "single_select",
+    "options": [
+      { "value": "before_2022", "label": "Before 2022" },
+      { "value": "2022_to_2024", "label": "2022-2024" },
+      { "value": "2025_or_later", "label": "2025 or later" },
+      { "value": "dont_remember", "label": "Don't remember" }
+    ],
+    "required": true,
+    "conditional_on": { "question_id": "previously_denied", "answer_value": "yes" },
+    "affects_credits": ["consider_reapplication_federal", "aish_reapplication_required"],
+    "ui_hints": {
+      "help_text": "The denial year helps separate federal rule changes from Alberta AISH reapplication requirements."
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_employment_income_2024",
+    "audience": "dtc",
+    "order": 130,
+    "question_text": "Did you have any employment or self-employment income in 2024?",
+    "answer_type": "yes_no",
+    "options": [
+      { "value": "yes", "label": "Yes" },
+      { "value": "no", "label": "No" }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": ["cwb_disability_supplement"],
+    "ui_hints": {
+      "help_text": "Work income alone is not enough for the Canada Workers Benefit disability supplement; CRA has income, family-status, province, and student exclusion rules."
+    },
+    "follow_ups": []
+  }
+]
