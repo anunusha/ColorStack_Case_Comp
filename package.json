@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/anunusha/ColorStack_Case_Comp#readme",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.92.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-separator": "^1.1.8",
