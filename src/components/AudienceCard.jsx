@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function AudienceCard({ href, eyebrow, title, description }) {
   return (
     <Link className="group block" href={href}>
-      <Card className="h-full transition group-hover:-translate-y-1 group-hover:shadow-md">
+      <Card className="h-full border-[var(--color-border)] bg-[var(--color-card)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
         <CardHeader className="gap-3">
           {eyebrow ? (
             <Badge className="w-fit" variant="secondary">
@@ -16,13 +16,12 @@ export default function AudienceCard({ href, eyebrow, title, description }) {
           <CardTitle className="text-2xl">{title}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <p className="text-sm leading-6 text-slate-600">{description}</p>
-          <p className="text-sm font-semibold text-slate-900">
-            Start intake <span aria-hidden="true">-&gt;</span>
+          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">{description}</p>
+          <p className="text-sm font-semibold text-[var(--color-primary)]">
+            Start intake <span aria-hidden="true">→</span>
           </p>
         </CardContent>
       </Card>
     </Link>
   );
 }
-

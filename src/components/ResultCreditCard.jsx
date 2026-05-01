@@ -7,7 +7,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
     credit.plain_english_explanation ?? credit.fallback_explanation;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="border-[var(--color-border)] shadow-[var(--shadow-card)]">
       <CardHeader className="gap-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div className="grid gap-2">
@@ -32,7 +32,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
         ) : null}
         <Separator />
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="bg-[var(--color-surface-subtle)] text-[var(--color-surface-subtle-foreground)]">
+          <Card className="bg-[var(--palette-white)]">
             <CardHeader>
               <CardTitle className="text-lg">Documents to gather</CardTitle>
             </CardHeader>
@@ -44,7 +44,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
               </ul>
             </CardContent>
           </Card>
-          <Card className="bg-[var(--color-surface-subtle)] text-[var(--color-surface-subtle-foreground)]">
+          <Card className="bg-[var(--palette-white)]">
             <CardHeader>
               <CardTitle className="text-lg">Where it goes</CardTitle>
             </CardHeader>

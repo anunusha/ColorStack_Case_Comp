@@ -32,10 +32,12 @@ export default function DeepLinkDialog({
 
       if (open) {
         nextParams.set("modal", modalKey);
-      } else {
-        nextParams.delete("modal");
+        const query = nextParams.toString();
+        router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+        return;
       }
 
+      nextParams.delete("modal");
       const query = nextParams.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },

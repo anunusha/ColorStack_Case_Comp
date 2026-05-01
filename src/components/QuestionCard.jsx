@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function QuestionCard({ questionText, helperText, action }) {
   return (
-    <Card className="bg-[var(--color-surface-subtle)] text-[var(--color-surface-subtle-foreground)]">
+    <Card className="bg-[var(--palette-white)]">
       <CardHeader className="gap-3">
         <div className="flex items-start justify-between gap-3">
           <Badge className="w-fit" variant="secondary">

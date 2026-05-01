@@ -1,0 +1,80 @@
+/**
+ * TaxBridge palette (named tokens + semantic mapping).
+ * Black #000000 · Platinum #eff1f3 · Rosy Granite #808089 · Electric Sapphire #5d6bea · Blush Rose #d96d7f
+ */
+
+:root {
+  --palette-black: #000000;
+  --palette-platinum: #eff1f3;
+  --palette-granite: #808089;
+  --palette-sapphire: #5d6bea;
+  --palette-blush: #d96d7f;
+  --palette-white: #ffffff;
+
+  /* Semantic */
+  --color-background: var(--palette-platinum);
+  --color-foreground: var(--palette-black);
+  --color-card: var(--palette-white);
+  --color-card-foreground: var(--palette-black);
+
+  --color-muted: color-mix(in oklab, var(--palette-platinum) 78%, var(--palette-granite));
+  --color-muted-foreground: var(--palette-granite);
+
+  --color-border: color-mix(in oklab, var(--palette-granite) 28%, white);
+
+  --color-primary: var(--palette-sapphire);
+  --color-primary-foreground: var(--palette-white);
+
+  --color-secondary: color-mix(in oklab, var(--palette-platinum) 92%, var(--palette-granite));
+  --color-secondary-foreground: var(--palette-black);
+
+  --color-accent: color-mix(in oklab, var(--palette-sapphire) 14%, var(--palette-white));
+  --color-accent-foreground: var(--palette-black);
+
+  --color-destructive: var(--palette-blush);
+  --color-destructive-foreground: var(--palette-white);
+
+  --color-ring: var(--palette-sapphire);
+
+  --color-surface-subtle: color-mix(in oklab, var(--palette-platinum) 55%, white);
+  --color-surface-subtle-foreground: var(--palette-black);
+
+  --color-sidebar: var(--palette-white);
+  --color-sidebar-border: color-mix(in oklab, var(--palette-granite) 18%, transparent);
+  --color-sidebar-muted: var(--palette-granite);
+
+  /* Typography scale (rem) */
+  --text-display: 2.25rem;
+  --text-display--line-height: 2.75rem;
+  --text-title: 1.875rem;
+  --text-title--line-height: 2.25rem;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.25rem;
+
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 2px color-mix(in oklab, var(--palette-black) 6%, transparent),
+    0 12px 24px color-mix(in oklab, var(--palette-sapphire) 6%, transparent);
+}
+
+@theme inline {
+  --color-background: var(--palette-platinum);
+  --color-foreground: var(--palette-black);
+  --color-card: var(--palette-white);
+  --color-card-foreground: var(--palette-black);
+  --color-muted: color-mix(in oklab, var(--palette-platinum) 78%, var(--palette-granite));
+  --color-muted-foreground: var(--palette-granite);
+  --color-border: color-mix(in oklab, var(--palette-granite) 28%, white);
+  --color-primary: var(--palette-sapphire);
+  --color-primary-foreground: var(--palette-white);
+  --color-secondary: color-mix(in oklab, var(--palette-platinum) 92%, var(--palette-granite));
+  --color-secondary-foreground: var(--palette-black);
+  --color-accent: color-mix(in oklab, var(--palette-sapphire) 14%, var(--palette-white));
+  --color-accent-foreground: var(--palette-black);
+  --color-destructive: var(--palette-blush);
+  --color-destructive-foreground: var(--palette-white);
+  --color-ring: var(--palette-sapphire);
+}

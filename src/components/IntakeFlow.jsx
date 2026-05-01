@@ -91,8 +91,8 @@ export default function IntakeFlow({ audience }) {
   if (visibleQuestions.length === 0) {
     return (
       <PageShell className="max-w-4xl">
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-6 font-semibold text-red-700">
+        <Card className="border-[color-mix(in_oklab,var(--palette-blush)_55%,var(--palette-white))] bg-[color-mix(in_oklab,var(--palette-blush)_10%,white)]">
+          <CardContent className="p-6 font-semibold text-[var(--palette-blush)]">
             We do not have an intake flow for this audience yet.
           </CardContent>
         </Card>
@@ -138,7 +138,7 @@ export default function IntakeFlow({ audience }) {
   function openHelp() {
     const nextParams = new URLSearchParams(searchParams.toString());
     nextParams.set("help", currentQuestion.id);
-    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+    router.push(`${pathname}?${nextParams.toString()}`, { scroll: false });
   }
 
   function closeHelp() {
@@ -220,7 +220,7 @@ export default function IntakeFlow({ audience }) {
     if (currentQuestion.answer_type === "number") {
       return (
         <input
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-base outline-none ring-offset-2 focus:ring-2 focus:ring-slate-400"
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3 text-base text-[var(--color-foreground)] outline-none ring-offset-2 ring-offset-[var(--color-card)] focus:ring-2 focus:ring-[var(--color-ring)]"
           inputMode="numeric"
           min={currentQuestion.ui_hints?.min}
           max={currentQuestion.ui_hints?.max}
@@ -238,7 +238,7 @@ export default function IntakeFlow({ audience }) {
           <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
             Select one option
           </p>
-          <div className="max-h-72 overflow-y-auto rounded-xl border border-slate-200 p-3">
+          <div className="max-h-72 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3">
             <div className="grid gap-2">
               {options.map((option) => {
                 const isSelected = currentAnswer === option.value;
@@ -261,8 +261,8 @@ export default function IntakeFlow({ audience }) {
     }
 
     return (
-      <Card className="border-red-200 bg-red-50">
-        <CardContent className="p-4 text-sm font-semibold text-red-700">
+      <Card className="border-[color-mix(in_oklab,var(--palette-blush)_55%,var(--palette-white))] bg-[color-mix(in_oklab,var(--palette-blush)_10%,white)]">
+        <CardContent className="p-4 text-sm font-semibold text-[var(--palette-blush)]">
           Unsupported question type: {currentQuestion.answer_type}
         </CardContent>
       </Card>
@@ -285,7 +285,7 @@ export default function IntakeFlow({ audience }) {
         description="We will use your answers only in this browser session to estimate which credits may be worth reviewing. Nothing is stored on a server."
       />
 
-      <Card className="mt-10 shadow-sm">
+      <Card className="mt-10 border-[var(--color-border)] shadow-[var(--shadow-card)]">
         <CardContent className="grid gap-8 p-6 sm:p-8">
           <div className="grid gap-3">
             <div className="flex items-center justify-between gap-4 text-sm font-semibold text-[var(--color-muted-foreground)]">

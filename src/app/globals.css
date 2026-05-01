@@ -1,61 +1,5 @@
 @import "tailwindcss";
-
-@theme {
-  /* Palette */
-  --color-black: #000501;
-  --color-white: #ffffff;
-  --color-dusk-blue: #36558f;
-  --color-dust-grey: #cdc1b7;
-  --color-dusty-olive: #726e60;
-
-  /* App tokens (used by UI components) */
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-black);
-  --color-card: var(--color-dusty-olive);
-  --color-card-foreground: var(--color-white);
-  --color-muted: color-mix(in oklab, var(--color-dust-grey) 45%, white);
-  --color-muted-foreground: color-mix(in oklab, var(--color-black) 72%, white);
-  --color-border: color-mix(in oklab, var(--color-black) 14%, transparent);
-
-  --color-primary: var(--color-dusk-blue);
-  --color-primary-foreground: var(--color-white);
-  --color-secondary: color-mix(in oklab, var(--color-dust-grey) 55%, white);
-  --color-secondary-foreground: var(--color-black);
-  --color-accent: var(--color-dusty-olive);
-  --color-accent-foreground: var(--color-white);
-  --color-destructive: color-mix(in oklab, var(--color-black) 12%, red);
-  --color-destructive-foreground: var(--color-white);
-
-  --color-ring: color-mix(in oklab, var(--color-dusk-blue) 55%, white);
-}
-
-:root {
-  --color-black: #000501;
-  --color-white: #ffffff;
-  --color-dusk-blue: #36558f;
-  --color-dust-grey: #cdc1b7;
-  --color-dusty-olive: #726e60;
-
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-black);
-  --color-card: var(--color-dusty-olive);
-  --color-card-foreground: var(--color-white);
-  --color-surface-subtle: color-mix(in oklab, var(--color-dusty-olive) 18%, white);
-  --color-surface-subtle-foreground: var(--color-black);
-  --color-muted: color-mix(in oklab, var(--color-dust-grey) 45%, white);
-  --color-muted-foreground: color-mix(in oklab, var(--color-black) 72%, white);
-  --color-border: color-mix(in oklab, var(--color-black) 14%, transparent);
-
-  --color-primary: var(--color-dusk-blue);
-  --color-primary-foreground: var(--color-white);
-  --color-secondary: color-mix(in oklab, var(--color-dust-grey) 55%, white);
-  --color-secondary-foreground: var(--color-black);
-  --color-accent: var(--color-dusty-olive);
-  --color-accent-foreground: var(--color-white);
-  --color-destructive: color-mix(in oklab, var(--color-black) 12%, red);
-  --color-destructive-foreground: var(--color-white);
-  --color-ring: color-mix(in oklab, var(--color-dusk-blue) 55%, white);
-}
+@import "../styles/design-tokens.css";
 
 html {
   color-scheme: light;
@@ -65,10 +9,62 @@ body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, ui-sans-serif, system-ui), sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography utilities (CRAP: repetition + hierarchy) */
+.text-display {
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.text-section-title {
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.text-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: var(--text-body-lg--line-height);
+}
+
+.text-caption {
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+}
+
+.font-brand {
+  font-family: var(--font-display, ui-serif, Georgia), serif;
+}
+
+/* Hero banner (Origin-inspired subtle gradient) */
+.hero-banner {
+  background: linear-gradient(
+    120deg,
+    color-mix(in oklab, var(--palette-sapphire) 35%, white) 0%,
+    color-mix(in oklab, var(--palette-blush) 22%, white) 48%,
+    var(--palette-platinum) 100%
+  );
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Horizontal FAQ-style strip: scroll without extra deps */
+.faq-strip {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.faq-strip > * {
+  scroll-snap-align: start;
 }

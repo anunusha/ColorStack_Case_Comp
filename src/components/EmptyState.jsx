@@ -10,12 +10,14 @@ export default function EmptyState({
   secondaryAction,
 }) {
   return (
-    <Card className="border-slate-200 bg-white shadow-sm">
+    <Card className="border-[var(--color-border)] bg-[var(--color-card)] shadow-sm">
       <CardHeader>
         <CardTitle className="text-2xl">{title}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {description ? <p className="leading-7 text-slate-600">{description}</p> : null}
+        {description ? (
+          <p className="leading-7 text-[var(--color-muted-foreground)]">{description}</p>
+        ) : null}
         <div className="flex flex-col gap-3 sm:flex-row">
           {primaryAction ? (
             <Button asChild>
@@ -32,4 +34,3 @@ export default function EmptyState({
     </Card>
   );
 }
-

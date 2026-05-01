@@ -11,17 +11,12 @@ export default function SectionHeader({
     <div className={cn("grid gap-4", className)}>
       <div className="grid gap-3">
         {badge}
-        <h1 className="text-4xl font-bold tracking-tight text-slate-950">
-          {title}
-        </h1>
+        <h1 className="text-display text-[var(--color-foreground)]">{title}</h1>
         {description ? (
-          <p className="max-w-2xl text-lg leading-8 text-slate-600">
-            {description}
-          </p>
+          <p className="max-w-2xl text-body-lg text-[var(--color-muted-foreground)]">{description}</p>
         ) : null}
       </div>
       {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
     </div>
   );
 }
-

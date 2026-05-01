@@ -20,7 +20,7 @@ const buttonVariants = cva(
         ghost:
           "text-[var(--color-foreground)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-secondary-foreground)]",
         link:
-          "text-[var(--color-foreground)] underline-offset-4 hover:underline",
+          "text-[var(--color-primary)] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

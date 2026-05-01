@@ -160,17 +160,17 @@ export default function ResultsPage() {
           description="These are prototype estimates based on your answers. Review them before filing and use the documents list as a starting checklist."
         />
 
-        <Card className="shadow-sm">
+        <Card className="border-[var(--color-border)] shadow-sm">
           <CardHeader className="gap-2">
-            <CardTitle className="text-base text-slate-600">
+            <CardTitle className="text-base text-[var(--color-muted-foreground)]">
               Estimated total surfaced
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-2">
-            <p className="text-4xl font-bold text-slate-900">
+            <p className="text-4xl font-bold text-[var(--color-foreground)]">
               {isLoading ? "..." : formatCurrency(estimatedTotal)}
             </p>
-            <p className="text-sm leading-6 text-slate-600">
+            <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
               Amounts are rough estimates for demo purposes, not guaranteed refund values.
             </p>
           </CardContent>
@@ -178,7 +178,7 @@ export default function ResultsPage() {
       </div>
 
       {isLoading ? (
-        <Card className="mt-10 shadow-sm">
+        <Card className="mt-10 border-[var(--color-border)] shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">
               Matching credits and drafting plain-English explanations...
@@ -231,10 +231,10 @@ export default function ResultsPage() {
         </section>
       )}
 
-      <Card className="mt-8 shadow-sm">
+      <Card className="mt-8 border-[var(--color-border)] shadow-sm">
         <CardHeader className="gap-2">
           <CardTitle className="text-xl">Downloadable checklist</CardTitle>
-          <p className="text-sm leading-6 text-slate-600">
+          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
             Review before generating so you can cancel if needed.
           </p>
         </CardHeader>
