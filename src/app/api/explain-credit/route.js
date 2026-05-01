@@ -60,7 +60,7 @@ export async function POST(request) {
             },
           ],
           generationConfig: {
-            maxOutputTokens: 220,
+            maxOutputTokens: 300,
             temperature: 0.2,
           },
         }),
@@ -72,8 +72,16 @@ export async function POST(request) {
     }
 
     const data = await response.json();
+    const candidate = data.candidates?.[0];
+
+    if (candidate?.finishReason === "MAX_TOKENS") {
+      console.warn(
+        "Gemini credit explanation response was truncated. Consider raising maxOutputTokens."
+      );
+    }
+
     const explanation =
-      data.candidates?.[0]?.content?.parts
+      candidate?.content?.parts
         ?.map((part) => part.text)
         .filter(Boolean)
         .join("\n")

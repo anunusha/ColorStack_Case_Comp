@@ -22,6 +22,36 @@ function withDisclaimer(message) {
   return `${message} I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.`;
 }
 
+async function callGeminiWithRetry(url, payload, maxAttempts = 2) {
+  let lastResponse = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    lastResponse = response;
+
+    if (response.ok) {
+      return response;
+    }
+
+    // Retry only transient upstream failures once.
+    if (attempt < maxAttempts && response.status >= 500) {
+      await new Promise((resolve) => setTimeout(resolve, 350 * attempt));
+      continue;
+    }
+
+    return response;
+  }
+
+  return lastResponse;
+}
+
 export async function POST(request) {
   let payload;
 
@@ -78,30 +108,32 @@ ${conversationText || "user: Please explain this question in simple terms."}
 
 Respond to the latest user message only.`;
 
-    const response = await fetch(
-      `${GEMINI_API_BASE_URL}/${model}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const geminiUrl = `${GEMINI_API_BASE_URL}/${model}:generateContent?key=${apiKey}`;
+    const geminiPayload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: prompt }],
-            },
-          ],
-          generationConfig: {
-            maxOutputTokens: 320,
-            temperature: 0.2,
-          },
-          safetySettings: SAFETY_SETTINGS,
-        }),
-      }
-    );
+      ],
+      generationConfig: {
+        maxOutputTokens: 500,
+        temperature: 0.2,
+      },
+      safetySettings: SAFETY_SETTINGS,
+    };
+    const response = await callGeminiWithRetry(geminiUrl, geminiPayload);
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return NextResponse.json({
+          reply: withDisclaimer(
+            "I am getting a lot of requests right now. Please wait about 20-30 seconds and ask again, or continue with the next question for now."
+          ),
+          source: "rate_limited",
+        });
+      }
+
       throw new Error(`Gemini request failed with ${response.status}`);
     }
 
@@ -141,6 +173,12 @@ Respond to the latest user message only.`;
       });
     }
 
+    if (candidate.finishReason === "MAX_TOKENS") {
+      console.warn(
+        "Gemini question-help response was truncated. Consider raising maxOutputTokens."
+      );
+    }
+
     const reply = candidate.content?.parts
       ?.map((part) => part.text)
       .filter(Boolean)
@@ -159,6 +197,15 @@ Respond to the latest user message only.`;
     return NextResponse.json({ reply, source: "gemini" });
   } catch (error) {
     console.error("Question help request failed.", error);
+
+    if (String(error?.message || "").includes("429")) {
+      return NextResponse.json({
+        reply: withDisclaimer(
+          "I am temporarily rate-limited. Please retry shortly, or continue with the intake and come back to help when needed."
+        ),
+        source: "rate_limited",
+      });
+    }
 
     return NextResponse.json({
       reply:
