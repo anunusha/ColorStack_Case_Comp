@@ -51,8 +51,8 @@ export default function NextStepsCTA({ audience }) {
           rel="noopener noreferrer"
           target="_blank"
         >
-          <p className="text-base font-semibold">{config.primary.label} &#8594;</p>
-          <p className="mt-1 text-sm opacity-90">{config.primary.description}</p>
+          <p className="text-base font-semibold text-white">{config.primary.label} &#8594;</p>
+          <p className="mt-1 text-sm text-white/90">{config.primary.description}</p>
         </a>
 
         <a
