@@ -12,7 +12,7 @@ const NEXT_STEPS = {
     },
     secondary: {
       label: "Find a free CVITP clinic near you",
-      url: "https://apps.cra-arc.gc.ca/ebci/oecv/external/prot/disclaimer.action",
+      url: "https://www.canada.ca/en/revenue-agency/services/tax/individuals/community-volunteer-income-tax-program.html",
       description: "Free help from a trained volunteer, in person.",
     },
   },
