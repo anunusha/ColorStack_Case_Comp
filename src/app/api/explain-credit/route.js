@@ -4,9 +4,7 @@ import {
   buildCreditExplanationPrompt,
   getFallbackExplanation,
 } from "@/lib/prompts";
-
-const GEMINI_API_BASE_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models";
+import { callGroqChat, getGroqText } from "@/lib/groqClient";
 
 export async function POST(request) {
   let payload;
@@ -30,7 +28,7 @@ export async function POST(request) {
   }
 
   const fallbackExplanation = getFallbackExplanation(credit);
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
     return NextResponse.json({
@@ -40,59 +38,43 @@ export async function POST(request) {
   }
 
   try {
-    const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
-    const response = await fetch(
-      `${GEMINI_API_BASE_URL}/${model}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const result = await callGroqChat(
+      [
+        {
+          role: "user",
+          content: buildCreditExplanationPrompt(credit, userContext),
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [
-                {
-                  text: buildCreditExplanationPrompt(credit, userContext),
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            maxOutputTokens: 300,
-            temperature: 0.2,
-          },
-        }),
-      }
+      ],
+      { maxTokens: 300, temperature: 0.2 }
     );
 
-    if (!response.ok) {
-      throw new Error(`Gemini request failed with ${response.status}`);
+    if (!result.ok && result.status === 429) {
+      return NextResponse.json({
+        explanation: fallbackExplanation,
+        source: "rate_limited",
+      });
     }
 
-    const data = await response.json();
-    const candidate = data.candidates?.[0];
-
-    if (candidate?.finishReason === "MAX_TOKENS") {
-      console.warn(
-        "Gemini credit explanation response was truncated. Consider raising maxOutputTokens."
-      );
+    if (!result.ok) {
+      console.error("Groq explanation request failed.", {
+        status: result.status,
+        source: result.source,
+        errorBody: result.data?.errorBody,
+      });
+      return NextResponse.json({
+        explanation: fallbackExplanation,
+        source: "fallback",
+      });
     }
 
-    const explanation =
-      candidate?.content?.parts
-        ?.map((part) => part.text)
-        .filter(Boolean)
-        .join("\n")
-        .trim() || fallbackExplanation;
+    const explanation = getGroqText(result.data) || fallbackExplanation;
 
     return NextResponse.json({
       explanation,
-      source: explanation === fallbackExplanation ? "fallback" : "gemini",
+      source: explanation === fallbackExplanation ? "fallback" : "groq",
     });
   } catch (error) {
-    console.error("Gemini explanation failed.", error);
+    console.error("Groq explanation failed.", error);
 
     return NextResponse.json({
       explanation: fallbackExplanation,
