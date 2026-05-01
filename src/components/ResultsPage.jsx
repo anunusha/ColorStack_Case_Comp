@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { explainCredits } from "@/lib/claudeClient";
@@ -8,6 +9,7 @@ import { matchCredits } from "@/lib/matchingEngine";
 import { incrementCounters } from "@/lib/supabaseClient";
 import DeepLinkDialog from "@/components/DeepLinkDialog";
 import EmptyState from "@/components/EmptyState";
+import NextStepsCTA from "@/components/NextStepsCTA";
 import PageShell from "@/components/PageShell";
 import { generatePDF } from "@/components/PDFChecklist";
 import ResultCreditCard from "@/components/ResultCreditCard";
@@ -31,6 +33,8 @@ function formatCurrency(amount) {
 }
 
 export default function ResultsPage() {
+  const searchParams = useSearchParams();
+  const isExample = searchParams.get("example") === "true";
   const [eligibleCredits, setEligibleCredits] = useState([]);
   const [intakeState] = useState(() => {
     if (typeof window === "undefined") {
@@ -105,6 +109,7 @@ export default function ResultsPage() {
         );
 
         if (
+          !isExample &&
           intakeSessionKey &&
           !incrementedSessionsRef.current.has(intakeSessionKey)
         ) {
@@ -129,7 +134,7 @@ export default function ResultsPage() {
     return () => {
       isCancelled = true;
     };
-  }, [intakeData, intakeSessionKey]);
+  }, [intakeData, intakeSessionKey, isExample]);
 
   if (!intakeData && !isLoading) {
     return (
@@ -148,6 +153,19 @@ export default function ResultsPage() {
       <Button asChild className="mb-8 w-fit" variant="link">
         <Link href="/">Back to home</Link>
       </Button>
+
+      {isExample ? (
+        <Card className="mb-8 border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_10%,white)] shadow-sm">
+          <CardContent className="p-4 text-sm leading-6 text-[var(--color-foreground)]">
+            <span className="font-semibold">Example results</span> - showing what{" "}
+            <span className="font-semibold">{intakeData?.persona_label ?? "an example student"}</span> would
+            see.{" "}
+            <Link className="font-semibold underline" href="/">
+              Try with your own info &#8594;
+            </Link>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_0.6fr] lg:items-end">
         <SectionHeader
@@ -215,20 +233,23 @@ export default function ResultsPage() {
           />
         </div>
       ) : (
-        <section className="mt-10 grid gap-5">
-          {eligibleCredits.map((credit) => (
-            <ResultCreditCard
-              credit={credit}
-              formattedDollars={
-                credit.computed_estimate?.display ??
-                (typeof credit.estimated_dollars === "number"
-                  ? formatCurrency(credit.estimated_dollars)
-                  : "Not estimated")
-              }
-              key={credit.id}
-            />
-          ))}
-        </section>
+        <>
+          <NextStepsCTA audience={intakeData?.audience} />
+          <section className="mt-10 grid gap-5">
+            {eligibleCredits.map((credit) => (
+              <ResultCreditCard
+                credit={credit}
+                formattedDollars={
+                  credit.computed_estimate?.display ??
+                  (typeof credit.estimated_dollars === "number"
+                    ? formatCurrency(credit.estimated_dollars)
+                    : "Not estimated")
+                }
+                key={credit.id}
+              />
+            ))}
+          </section>
+        </>
       )}
 
       <Card className="mt-8 border-[var(--color-border)] shadow-sm">

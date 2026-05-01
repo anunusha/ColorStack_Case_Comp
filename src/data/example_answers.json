@@ -1,0 +1,21 @@
+{
+  "student": {
+    "audience": "student",
+    "persona_label": "Aanya - international student, second-year UofA",
+    "answers": {
+      "paid_tuition_2024": "yes",
+      "tuition_amount_paid": 22800,
+      "has_t2202": "yes",
+      "studied_outside_canada": "no",
+      "had_tax_payable_2024": "got_refund",
+      "paid_student_loan_interest": "no",
+      "moved_for_school": "yes",
+      "income_at_new_school_location": ["employment_or_self_employment"],
+      "new_location_income_amount": 6400,
+      "age_19_or_older_by_april_2026": "yes",
+      "is_canadian_resident_for_tax": "yes",
+      "has_canada_training_credit_limit": "no",
+      "province_of_residence_dec_31_2024": "AB"
+    }
+  }
+}

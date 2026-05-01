@@ -1,5 +1,11 @@
+import { Suspense } from "react";
+
 import ResultsPage from "@/components/ResultsPage";
 
 export default function Results() {
-  return <ResultsPage />;
+  return (
+    <Suspense fallback={null}>
+      <ResultsPage />
+    </Suspense>
+  );
 }

@@ -1,28 +1,15 @@
-import AudienceCard from "@/components/AudienceCard";
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import CounterDisplay from "@/components/CounterDisplay";
 import FaqStrip from "@/components/landing/FaqStrip";
 import HowItWorksSteps from "@/components/landing/HowItWorksSteps";
 import PageShell from "@/components/PageShell";
-import SectionHeader from "@/components/SectionHeader";
+import exampleAnswers from "@/data/example_answers.json";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const audienceCards = [
-  {
-    href: "/intake/student",
-    eyebrow: "Student pathway",
-    title: "I'm a student",
-    description:
-      "Check tuition credits, GST/HST benefits, moving expenses, and student-specific filing opportunities.",
-  },
-  {
-    href: "/intake/dtc",
-    eyebrow: "DTC pathway",
-    title: "I'm exploring the DTC",
-    description:
-      "Understand Disability Tax Credit next steps, document needs, and related benefits in plain English.",
-  },
-];
 
 const barriers = [
   "Plain-English questions instead of CRA jargon",
@@ -31,31 +18,46 @@ const barriers = [
 ];
 
 export default function Landing() {
+  const router = useRouter();
+
+  function loadExample() {
+    window.sessionStorage.setItem("taxbridge-intake", JSON.stringify(exampleAnswers.student));
+    router.push("/results?example=true");
+  }
+
   return (
     <PageShell className="gap-20 py-12 lg:py-20">
       <section className="hero-banner grid gap-12 rounded-2xl border-2 border-[var(--palette-black)] p-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-10 xl:p-12">
         <div className="grid gap-10">
-          <SectionHeader
-            badge={
-              <Badge className="w-fit" variant="secondary">
-                Free tax credit guidance for underserved Canadians
-              </Badge>
-            }
-            title="Find the tax credits you might be missing."
-            description="TaxBridge asks simple questions, identifies likely credits and refunds, and gives you a personalized checklist for what to gather before filing."
-          />
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {audienceCards.map((card) => (
-              <AudienceCard
-                description={card.description}
-                eyebrow={card.eyebrow}
-                href={card.href}
-                key={card.href}
-                title={card.title}
-              />
-            ))}
+          <div className="grid gap-5">
+            <Badge className="w-fit" variant="secondary">
+              The hidden cost of not knowing
+            </Badge>
+            <h1 className="max-w-3xl text-display text-[var(--color-foreground)]">
+              Most students leave <span className="text-[var(--color-primary)]">$400-$1,500</span> in tax
+              credits unclaimed every year.
+            </h1>
+            <p className="max-w-2xl text-body-lg text-[var(--color-muted-foreground)]">
+              TaxBridge tells you what you&apos;re missing in 5 minutes.
+            </p>
           </div>
+
+          <div className="grid gap-3 sm:max-w-xl sm:grid-cols-2">
+            <Button className="h-12" onClick={() => router.push("/intake/student")}>
+              I&apos;m a student
+            </Button>
+            <Button className="h-12" onClick={() => router.push("/intake/dtc")} variant="outline">
+              I&apos;m exploring the DTC
+            </Button>
+          </div>
+
+          <button
+            className="w-fit text-sm font-semibold text-[var(--color-primary)] transition hover:underline"
+            onClick={loadExample}
+            type="button"
+          >
+            See what an example student gets back &#8594;
+          </button>
         </div>
 
         <Card className="border-[var(--color-border)] shadow-[var(--shadow-card)]">

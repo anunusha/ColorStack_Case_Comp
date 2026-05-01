@@ -7,6 +7,20 @@ export const DEFAULT_COUNTERS = {
 };
 
 let browserClient;
+let hasWarnedInvalidConfig = false;
+
+function isValidHttpUrl(value) {
+  if (!value || typeof value !== "string") {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 function getSupabaseClient() {
   const supabaseUrl =
@@ -15,17 +29,31 @@ function getSupabaseClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
     process.env.VITE_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabaseUrl || !supabaseAnonKey || !isValidHttpUrl(supabaseUrl)) {
+    if (!hasWarnedInvalidConfig) {
+      console.warn(
+        "Supabase is not configured with a valid public URL/key. Falling back to local default counters."
+      );
+      hasWarnedInvalidConfig = true;
+    }
     return null;
   }
 
   if (!browserClient) {
-    browserClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
+    try {
+      browserClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
+    } catch (error) {
+      if (!hasWarnedInvalidConfig) {
+        console.warn("Unable to initialize Supabase client. Falling back to defaults.", error);
+        hasWarnedInvalidConfig = true;
+      }
+      return null;
+    }
   }
 
   return browserClient;
