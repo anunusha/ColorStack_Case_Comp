@@ -47,11 +47,16 @@ export async function callGroqChat(
     }
 
     if (response.status === 429) {
+      const errorBody = await response.text();
       return {
         ok: false,
         status: 429,
         source: "rate_limited",
-        data: null,
+        data: {
+          errorBody,
+          retryAfter: response.headers.get("retry-after"),
+          rateLimitReset: response.headers.get("x-ratelimit-reset"),
+        },
       };
     }
 

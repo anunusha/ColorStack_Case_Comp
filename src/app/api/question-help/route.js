@@ -78,12 +78,17 @@ Respond to the latest user message only.`;
     });
 
     if (!result.ok && result.status === 429) {
+      console.warn("Groq question-help rate limited.", {
+        retryAfter: result.data?.retryAfter ?? null,
+        rateLimitReset: result.data?.rateLimitReset ?? null,
+        errorBody: result.data?.errorBody ?? null,
+      });
       return NextResponse.json({
         reply: withDisclaimer(
           "I am getting a lot of requests right now. Please wait about 20-30 seconds and ask again, or continue with the next question for now."
         ),
         source: "rate_limited",
-      });
+      }, { status: 429 });
     }
 
     if (!result.ok) {

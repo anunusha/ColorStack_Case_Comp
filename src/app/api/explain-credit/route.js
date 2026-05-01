@@ -49,10 +49,15 @@ export async function POST(request) {
     );
 
     if (!result.ok && result.status === 429) {
+      console.warn("Groq explain-credit rate limited.", {
+        retryAfter: result.data?.retryAfter ?? null,
+        rateLimitReset: result.data?.rateLimitReset ?? null,
+        errorBody: result.data?.errorBody ?? null,
+      });
       return NextResponse.json({
         explanation: fallbackExplanation,
         source: "rate_limited",
-      });
+      }, { status: 429 });
     }
 
     if (!result.ok) {
