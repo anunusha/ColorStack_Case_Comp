@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import { explainCredits } from "@/lib/claudeClient";
+import { matchCredits } from "@/lib/matchingEngine";
+import { incrementCounters } from "@/lib/supabaseClient";
+import DeepLinkDialog from "@/components/DeepLinkDialog";
 import EmptyState from "@/components/EmptyState";
 import PageShell from "@/components/PageShell";
+import { generatePDF } from "@/components/PDFChecklist";
 import ResultCreditCard from "@/components/ResultCreditCard";
 import SectionHeader from "@/components/SectionHeader";
 import { Badge } from "@/components/ui/badge";
@@ -12,92 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const placeholderCredits = {
-  student: [
-    {
-      id: "tuition_credit",
-      name: "Tuition Tax Credit",
-      estimated_dollars: 400,
-      documents_needed: ["T2202 form", "Tuition receipts"],
-      filing_destination: "Line 32300 of your T1 return",
-      fallback_explanation:
-        "Because you paid tuition, you may be able to claim a non-refundable tuition credit. Your next step is to download your T2202 and keep it with your tax documents.",
-      eligibility_rules: {
-        paid_tuition_2024: true,
-      },
-    },
-    {
-      id: "gst_hst_credit",
-      name: "GST/HST Credit",
-      estimated_dollars: 519,
-      documents_needed: ["Social Insurance Number", "Basic income details"],
-      filing_destination: "Automatically assessed after filing your return",
-      fallback_explanation:
-        "If you have modest income, filing a return can unlock quarterly GST/HST credit payments. Your next step is to file even if you do not owe tax.",
-      eligibility_rules: {
-        has_income: true,
-      },
-    },
-    {
-      id: "moving_expenses",
-      name: "Moving Expenses Deduction",
-      estimated_dollars: 300,
-      documents_needed: ["Moving receipts", "Lease or address records"],
-      filing_destination: "Line 21900 of your T1 return",
-      fallback_explanation:
-        "If you moved at least 40 km closer to school or work, some moving costs may be deductible. Your next step is to gather receipts before filing.",
-      eligibility_rules: {
-        moved_for_school: true,
-      },
-    },
-  ],
-  dtc: [
-    {
-      id: "disability_tax_credit",
-      name: "Disability Tax Credit",
-      estimated_dollars: 2500,
-      documents_needed: ["Form T2201", "Medical practitioner certification"],
-      filing_destination: "CRA DTC application, then claimed on your return",
-      fallback_explanation:
-        "Your answers suggest the DTC may be worth exploring with a medical practitioner. Your next step is to review Form T2201 and ask your practitioner about certification.",
-      eligibility_rules: {
-        has_impairment: true,
-        lasting_12_months: true,
-      },
-    },
-    {
-      id: "rdsp_gateway",
-      name: "RDSP Access",
-      estimated_dollars: 1000,
-      documents_needed: ["Approved DTC status", "Bank or credit union appointment"],
-      filing_destination: "Registered Disability Savings Plan provider",
-      fallback_explanation:
-        "DTC approval can unlock access to the RDSP and related government grants. Your next step is to focus on the DTC application first.",
-      eligibility_rules: {
-        has_impairment: true,
-        lasting_12_months: true,
-        has_practitioner: true,
-      },
-    },
-  ],
-};
-
 const audienceLabels = {
   student: "student",
   dtc: "DTC",
 };
-
-function matchCredits(audience, answers) {
-  const creditDb = placeholderCredits[audience] ?? [];
-
-  return creditDb
-    .filter((credit) =>
-      Object.entries(credit.eligibility_rules).every(
-        ([ruleKey, ruleValue]) => answers[ruleKey] === ruleValue
-      )
-    )
-    .sort((a, b) => b.estimated_dollars - a.estimated_dollars);
-}
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat("en-CA", {
@@ -108,53 +31,107 @@ function formatCurrency(amount) {
 }
 
 export default function ResultsPage() {
+  const [eligibleCredits, setEligibleCredits] = useState([]);
   const [intakeState] = useState(() => {
     if (typeof window === "undefined") {
-      return null;
+      return { raw: null, data: null };
     }
 
     const savedIntake = window.sessionStorage.getItem("taxbridge-intake");
 
     if (!savedIntake) {
-      return null;
+      return { raw: null, data: null };
     }
 
     try {
-      return JSON.parse(savedIntake);
+      return {
+        raw: savedIntake,
+        data: JSON.parse(savedIntake),
+      };
     } catch {
-      return null;
+      return { raw: null, data: null };
     }
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(intakeState.data));
   const [loadError, setLoadError] = useState(null);
+  const incrementedSessionsRef = useRef(new Set());
+  const intakeSessionKey = intakeState.raw;
+  const intakeData = intakeState.data;
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      try {
-        setIsLoading(false);
-      } catch (error) {
-        setLoadError(error);
-        setIsLoading(false);
-      }
-    }, 600);
-
-    return () => window.clearTimeout(timeoutId);
-  }, []);
-
-  const eligibleCredits = useMemo(() => {
-    if (!intakeState) {
-      return [];
-    }
-
-    return matchCredits(intakeState.audience, intakeState.answers);
-  }, [intakeState]);
-
-  const estimatedTotal = eligibleCredits.reduce(
-    (total, credit) => total + credit.estimated_dollars,
-    0
+  const estimatedTotal = useMemo(
+    () =>
+      eligibleCredits.reduce(
+        (total, credit) =>
+          total +
+          (typeof credit.computed_estimate?.value === "number"
+            ? credit.computed_estimate.value
+            : 0),
+        0
+      ),
+    [eligibleCredits]
   );
 
-  if (!intakeState && !isLoading) {
+  useEffect(() => {
+    if (!intakeData) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    async function loadResults() {
+      setIsLoading(true);
+      setLoadError(null);
+
+      try {
+        const matchedCredits = matchCredits(intakeData.audience, intakeData.answers);
+        const explainedCredits = await explainCredits(matchedCredits, {
+          audience: intakeData.audience,
+          answers: intakeData.answers,
+        });
+
+        if (isCancelled) {
+          return;
+        }
+
+        setEligibleCredits(explainedCredits);
+
+        const dollarsAmount = explainedCredits.reduce(
+          (total, credit) =>
+            total +
+            (typeof credit.computed_estimate?.value === "number"
+              ? credit.computed_estimate.value
+              : 0),
+          0
+        );
+
+        if (
+          intakeSessionKey &&
+          !incrementedSessionsRef.current.has(intakeSessionKey)
+        ) {
+          incrementCounters(explainedCredits.length, dollarsAmount);
+          incrementedSessionsRef.current.add(intakeSessionKey);
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        if (isCancelled) {
+          return;
+        }
+
+        setLoadError(error);
+        setEligibleCredits([]);
+        setIsLoading(false);
+      }
+    }
+
+    loadResults();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [intakeData, intakeSessionKey]);
+
+  if (!intakeData && !isLoading) {
     return (
       <PageShell className="max-w-4xl">
         <EmptyState
@@ -176,7 +153,7 @@ export default function ResultsPage() {
         <SectionHeader
           badge={
             <Badge className="w-fit" variant="secondary">
-              Results for {audienceLabels[intakeState?.audience] ?? "your pathway"}
+              Results for {audienceLabels[intakeData?.audience] ?? "your pathway"}
             </Badge>
           }
           title="Your likely credits and next steps"
@@ -218,7 +195,7 @@ export default function ResultsPage() {
           <EmptyState
             description="Something went wrong while generating your results in this browser session. You can safely try again."
             primaryAction={{
-              href: `/intake/${intakeState?.audience ?? "student"}`,
+              href: `/intake/${intakeData?.audience ?? "student"}`,
               label: "Retake intake",
             }}
             secondaryAction={{ href: "/", label: "Back to home" }}
@@ -228,9 +205,9 @@ export default function ResultsPage() {
       ) : eligibleCredits.length === 0 ? (
         <div className="mt-10">
           <EmptyState
-            description="Your answers did not trigger the placeholder credit rules. You can still file a return, review CRA guidance, or retake the intake if something was answered incorrectly."
+            description="Your answers did not trigger the current credit matching rules. You can still file a return, review CRA guidance, or retake the intake if something was answered incorrectly."
             primaryAction={{
-              href: `/intake/${intakeState?.audience ?? "student"}`,
+              href: `/intake/${intakeData?.audience ?? "student"}`,
               label: "Retake intake",
             }}
             secondaryAction={{ href: "/", label: "Back to home" }}
@@ -242,7 +219,12 @@ export default function ResultsPage() {
           {eligibleCredits.map((credit) => (
             <ResultCreditCard
               credit={credit}
-              formattedDollars={formatCurrency(credit.estimated_dollars)}
+              formattedDollars={
+                credit.computed_estimate?.display ??
+                (typeof credit.estimated_dollars === "number"
+                  ? formatCurrency(credit.estimated_dollars)
+                  : "Not estimated")
+              }
               key={credit.id}
             />
           ))}
@@ -253,13 +235,25 @@ export default function ResultsPage() {
         <CardHeader className="gap-2">
           <CardTitle className="text-xl">Downloadable checklist</CardTitle>
           <p className="text-sm leading-6 text-slate-600">
-            PDF generation will connect to Coder B&apos;s module during the merge phase.
+            Review before generating so you can cancel if needed.
           </p>
         </CardHeader>
         <CardContent>
-          <Button disabled variant="secondary">
-            Download PDF soon
-          </Button>
+          {isLoading || eligibleCredits.length === 0 ? (
+            <Button disabled variant="secondary">
+              Download PDF
+            </Button>
+          ) : (
+            <DeepLinkDialog
+              confirmLabel="Generate PDF"
+              description="This will download your checklist locally. You can cancel now if you need to review your results first."
+              modalKey="download-checklist"
+              onConfirm={() => generatePDF(intakeData?.audience, eligibleCredits)}
+              title="Generate checklist PDF?"
+            >
+              Download PDF
+            </DeepLinkDialog>
+          )}
         </CardContent>
       </Card>
     </PageShell>

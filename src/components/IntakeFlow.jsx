@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { CircleHelp } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import dtcQuestions from "@/data/dtc_questions.json";
+import studentQuestions from "@/data/student_questions.json";
 import PageShell from "@/components/PageShell";
+import QuestionHelpBot from "@/components/QuestionHelpBot";
 import QuestionCard from "@/components/QuestionCard";
 import SectionHeader from "@/components/SectionHeader";
 import { Badge } from "@/components/ui/badge";
@@ -12,70 +16,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
 const questionSets = {
-  student: [
-    {
-      id: "paid_tuition_2024",
-      question_text: "Did you pay tuition fees in 2024?",
-      helper_text: "This can include university, college, or eligible training.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "has_t2202",
-      question_text: "Do you have, or can you download, a T2202 form?",
-      helper_text: "Most schools provide this through the student portal.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "moved_for_school",
-      question_text: "Did you move at least 40 km closer to school or work?",
-      helper_text: "Moving expenses can matter for some students.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "has_income",
-      question_text: "Did you earn employment or self-employment income?",
-      helper_text: "Income can affect refundable benefits and credits.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "international_student",
-      question_text: "Are you an international student?",
-      helper_text: "Some filing steps differ, but you may still have options.",
-      answer_type: "yes_no",
-    },
-  ],
-  dtc: [
-    {
-      id: "has_impairment",
-      question_text: "Do you have a disability or impairment that affects daily life?",
-      helper_text: "This can include physical, mental, sensory, or chronic conditions.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "lasting_12_months",
-      question_text: "Has it lasted, or is it expected to last, at least 12 months?",
-      helper_text: "The DTC focuses on prolonged impairments.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "needs_support",
-      question_text: "Do you often need extra time, therapy, devices, or support?",
-      helper_text: "Support needs can help explain how the impairment affects you.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "has_practitioner",
-      question_text: "Do you have a medical practitioner who knows your situation?",
-      helper_text: "A practitioner must certify the DTC application form.",
-      answer_type: "yes_no",
-    },
-    {
-      id: "filed_before",
-      question_text: "Have you applied for the DTC before?",
-      helper_text: "Prior applications can affect your next best step.",
-      answer_type: "yes_no",
-    },
-  ],
+  student: studentQuestions,
+  dtc: dtcQuestions,
 };
 
 const audienceLabels = {
@@ -83,18 +25,70 @@ const audienceLabels = {
   dtc: "DTC applicant",
 };
 
-const answerOptions = [
-  { label: "Yes", value: true },
-  { label: "No", value: false },
-];
+function isConditionMatch(answerValue, expectedValue) {
+  if (Array.isArray(answerValue)) {
+    return answerValue.includes(expectedValue);
+  }
+
+  return answerValue === expectedValue;
+}
+
+function isQuestionVisible(question, answers) {
+  const condition = question.conditional_on;
+
+  if (!condition) {
+    return true;
+  }
+
+  return isConditionMatch(answers[condition.question_id], condition.answer_value);
+}
+
+function getVisibleQuestions(questions, answers) {
+  return questions.filter((question) => isQuestionVisible(question, answers));
+}
+
+function pruneAnswers(questions, answers) {
+  const visibleQuestionIds = new Set(
+    getVisibleQuestions(questions, answers).map((question) => question.id)
+  );
+
+  return Object.fromEntries(
+    Object.entries(answers).filter(([questionId]) =>
+      visibleQuestionIds.has(questionId)
+    )
+  );
+}
+
+function isAnswered(question, value) {
+  switch (question.answer_type) {
+    case "multi_select":
+      return Array.isArray(value) && value.length > 0;
+    case "number":
+      return value !== undefined && value !== null && value !== "";
+    default:
+      return value !== undefined && value !== null && value !== "";
+  }
+}
 
 export default function IntakeFlow({ audience }) {
   const router = useRouter();
-  const questions = useMemo(() => questionSets[audience] ?? [], [audience]);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const questions = useMemo(
+    () =>
+      [...(questionSets[audience] ?? [])].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
+      ),
+    [audience]
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const visibleQuestions = useMemo(
+    () => getVisibleQuestions(questions, answers),
+    [questions, answers]
+  );
 
-  if (questions.length === 0) {
+  if (visibleQuestions.length === 0) {
     return (
       <PageShell className="max-w-4xl">
         <Card className="border-red-200 bg-red-50">
@@ -106,17 +100,33 @@ export default function IntakeFlow({ audience }) {
     );
   }
 
-  const currentQuestion = questions[currentIndex];
+  const effectiveIndex = Math.min(currentIndex, visibleQuestions.length - 1);
+  const currentQuestion = visibleQuestions[effectiveIndex];
   const currentAnswer = answers[currentQuestion.id];
-  const isFirstQuestion = currentIndex === 0;
-  const isLastQuestion = currentIndex === questions.length - 1;
-  const progressPercent = ((currentIndex + 1) / questions.length) * 100;
+  const isFirstQuestion = effectiveIndex === 0;
+  const isLastQuestion = effectiveIndex === visibleQuestions.length - 1;
+  const totalQuestionCount = questions.length;
+  const progressPercent = ((effectiveIndex + 1) / totalQuestionCount) * 100;
+  const isHelpOpen = searchParams.get("help") === currentQuestion.id;
 
   function selectAnswer(value) {
-    setAnswers((previousAnswers) => ({
-      ...previousAnswers,
-      [currentQuestion.id]: value,
-    }));
+    setAnswers((previousAnswers) => {
+      const nextAnswers = {
+        ...previousAnswers,
+        [currentQuestion.id]: value,
+      };
+      return pruneAnswers(questions, nextAnswers);
+    });
+  }
+
+  function toggleMultiSelectOption(optionValue) {
+    const selectedValues = Array.isArray(currentAnswer) ? currentAnswer : [];
+    const hasValue = selectedValues.includes(optionValue);
+    const nextValues = hasValue
+      ? selectedValues.filter((value) => value !== optionValue)
+      : [...selectedValues, optionValue];
+
+    selectAnswer(nextValues);
   }
 
   function goBack() {
@@ -125,11 +135,29 @@ export default function IntakeFlow({ audience }) {
     }
   }
 
+  function openHelp() {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("help", currentQuestion.id);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }
+
+  function closeHelp() {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete("help");
+    const query = nextParams.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
+
   function goNext() {
+    if (!isAnswered(currentQuestion, currentAnswer)) {
+      return;
+    }
+
     const nextAnswers = {
       ...answers,
       [currentQuestion.id]: currentAnswer,
     };
+    const cleanedAnswers = pruneAnswers(questions, nextAnswers);
 
     if (!isLastQuestion) {
       setCurrentIndex((previousIndex) => previousIndex + 1);
@@ -138,9 +166,107 @@ export default function IntakeFlow({ audience }) {
 
     sessionStorage.setItem(
       "taxbridge-intake",
-      JSON.stringify({ audience, answers: nextAnswers })
+      JSON.stringify({ audience, answers: cleanedAnswers })
     );
     router.push("/results");
+  }
+
+  function renderAnswerInput() {
+    const options = currentQuestion.options ?? [];
+
+    if (["yes_no", "single_select"].includes(currentQuestion.answer_type)) {
+      return (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {options.map((option) => {
+            const isSelected = currentAnswer === option.value;
+
+            return (
+              <Button
+                className="h-auto justify-start whitespace-normal break-words rounded-xl px-5 py-6 text-left text-base leading-6"
+                key={option.value}
+                onClick={() => selectAnswer(option.value)}
+                variant={isSelected ? "default" : "outline"}
+              >
+                {option.label}
+              </Button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    if (currentQuestion.answer_type === "multi_select") {
+      return (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {options.map((option) => {
+            const selectedValues = Array.isArray(currentAnswer) ? currentAnswer : [];
+            const isSelected = selectedValues.includes(option.value);
+
+            return (
+              <Button
+                className="h-auto justify-start whitespace-normal break-words rounded-xl px-5 py-6 text-left text-base leading-6"
+                key={option.value}
+                onClick={() => toggleMultiSelectOption(option.value)}
+                variant={isSelected ? "default" : "outline"}
+              >
+                {option.label}
+              </Button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    if (currentQuestion.answer_type === "number") {
+      return (
+        <input
+          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-base outline-none ring-offset-2 focus:ring-2 focus:ring-slate-400"
+          inputMode="numeric"
+          min={currentQuestion.ui_hints?.min}
+          max={currentQuestion.ui_hints?.max}
+          onChange={(event) => selectAnswer(event.target.value)}
+          placeholder={currentQuestion.ui_hints?.placeholder ?? "Enter a number"}
+          type="number"
+          value={currentAnswer ?? ""}
+        />
+      );
+    }
+
+    if (currentQuestion.answer_type === "dropdown") {
+      return (
+        <div className="grid gap-3">
+          <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
+            Select one option
+          </p>
+          <div className="max-h-72 overflow-y-auto rounded-xl border border-slate-200 p-3">
+            <div className="grid gap-2">
+              {options.map((option) => {
+                const isSelected = currentAnswer === option.value;
+
+                return (
+                  <Button
+                    className="h-auto justify-start whitespace-normal break-words rounded-xl px-4 py-3 text-left text-base leading-6"
+                    key={option.value}
+                    onClick={() => selectAnswer(option.value)}
+                    variant={isSelected ? "default" : "outline"}
+                  >
+                    {option.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="p-4 text-sm font-semibold text-red-700">
+          Unsupported question type: {currentQuestion.answer_type}
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -164,7 +290,7 @@ export default function IntakeFlow({ audience }) {
           <div className="grid gap-3">
             <div className="flex items-center justify-between gap-4 text-sm font-semibold text-[var(--color-muted-foreground)]">
               <span>
-                Question {currentIndex + 1} of {questions.length}
+                Question {effectiveIndex + 1} of {totalQuestionCount}
               </span>
               <span>{Math.round(progressPercent)}%</span>
             </div>
@@ -172,37 +298,41 @@ export default function IntakeFlow({ audience }) {
           </div>
 
           <QuestionCard
-            helperText={currentQuestion.helper_text}
+            action={
+              <Button
+                aria-label="Get help with this question"
+                className="h-8 w-8 rounded-full p-0"
+                onClick={openHelp}
+                title="Not sure? Ask for help"
+                variant="outline"
+              >
+                <CircleHelp className="h-4 w-4" />
+              </Button>
+            }
+            helperText={currentQuestion.ui_hints?.help_text}
             questionText={currentQuestion.question_text}
           />
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            {answerOptions.map((option) => {
-              const isSelected = currentAnswer === option.value;
-
-              return (
-                <Button
-                  className="h-auto justify-start rounded-xl px-5 py-6 text-left text-base"
-                  key={option.label}
-                  onClick={() => selectAnswer(option.value)}
-                  variant={isSelected ? "default" : "outline"}
-                >
-                  {option.label}
-                </Button>
-              );
-            })}
-          </div>
+          {renderAnswerInput()}
 
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
             <Button disabled={isFirstQuestion} onClick={goBack} variant="outline">
               Back
             </Button>
-            <Button disabled={currentAnswer === undefined} onClick={goNext}>
+            <Button disabled={!isAnswered(currentQuestion, currentAnswer)} onClick={goNext}>
               {isLastQuestion ? "See my results" : "Next"}
             </Button>
           </div>
         </CardContent>
       </Card>
+
+      <QuestionHelpBot
+        audience={audience}
+        isOpen={isHelpOpen}
+        key={currentQuestion.id}
+        onClose={closeHelp}
+        question={currentQuestion}
+      />
     </PageShell>
   );
 }

@@ -1,13 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function QuestionCard({ questionText, helperText }) {
+export default function QuestionCard({ questionText, helperText, action }) {
   return (
     <Card className="bg-[var(--color-surface-subtle)] text-[var(--color-surface-subtle-foreground)]">
       <CardHeader className="gap-3">
-        <Badge className="w-fit" variant="secondary">
-          TaxBridge asks
-        </Badge>
+        <div className="flex items-start justify-between gap-3">
+          <Badge className="w-fit" variant="secondary">
+            TaxBridge asks
+          </Badge>
+          {action}
+        </div>
         <CardTitle className="text-3xl leading-tight">{questionText}</CardTitle>
       </CardHeader>
       <CardContent>

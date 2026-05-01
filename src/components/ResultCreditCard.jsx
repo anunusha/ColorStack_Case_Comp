@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export default function ResultCreditCard({ credit, formattedDollars }) {
+  const explanation =
+    credit.plain_english_explanation ?? credit.fallback_explanation;
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="gap-4">
@@ -20,8 +23,13 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
       </CardHeader>
       <CardContent className="grid gap-6">
         <p className="leading-7 text-[var(--color-muted-foreground)]">
-          {credit.fallback_explanation}
+          {explanation}
         </p>
+        {credit.computed_estimate?.disclaimer ? (
+          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
+            {credit.computed_estimate.disclaimer}
+          </p>
+        ) : null}
         <Separator />
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="bg-[var(--color-surface-subtle)] text-[var(--color-surface-subtle-foreground)]">
