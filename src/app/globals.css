@@ -44,14 +44,9 @@ body {
   font-family: var(--font-display, ui-serif, Georgia), serif;
 }
 
-/* Hero banner (Origin-inspired subtle gradient) */
+/* Hero banner (no gradient: clean solid surface) */
 .hero-banner {
-  background: linear-gradient(
-    120deg,
-    color-mix(in oklab, var(--palette-sapphire) 35%, white) 0%,
-    color-mix(in oklab, var(--palette-blush) 22%, white) 48%,
-    var(--palette-platinum) 100%
-  );
+  background: var(--color-background);
 }
 
 a {

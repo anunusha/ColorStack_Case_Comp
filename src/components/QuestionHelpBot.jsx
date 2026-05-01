@@ -124,7 +124,7 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
 
           <div className="flex-1 overflow-y-auto px-4 py-4">
             {messages.length === 0 ? (
-              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4 text-sm text-[var(--color-muted-foreground)]">
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] p-4 text-sm text-[var(--color-muted-foreground)]">
                 Ask about this question, for example: &quot;What does this mean?&quot; or &quot;How should I
                 think about my situation?&quot;
               </div>

@@ -238,7 +238,7 @@ export default function IntakeFlow({ audience }) {
           <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
             Select one option
           </p>
-          <div className="max-h-72 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3">
+          <div className="max-h-72 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] p-3">
             <div className="grid gap-2">
               {options.map((option) => {
                 const isSelected = currentAnswer === option.value;

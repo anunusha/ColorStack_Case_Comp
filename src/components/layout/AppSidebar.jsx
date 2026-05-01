@@ -161,7 +161,7 @@ export default function AppSidebar({ className }) {
 
       <div className="mt-auto px-1 pt-6">
         <Link
-          className="flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-[linear-gradient(135deg,color-mix(in_oklab,var(--palette-sapphire)_18%,white),color-mix(in_oklab,var(--palette-blush)_14%,white))] px-3 py-3 text-sm font-semibold text-[var(--color-foreground)] shadow-sm transition hover:opacity-95"
+          className="flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] px-3 py-3 text-sm font-semibold text-[var(--color-foreground)] shadow-sm transition hover:bg-[var(--color-muted)]"
           href="/intake/student"
         >
           <Sparkles className="size-4 text-[var(--color-primary)]" aria-hidden />

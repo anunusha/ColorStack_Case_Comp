@@ -47,7 +47,7 @@ export default function HowItWorksSteps() {
         {steps.map(({ n, title, description, icon: Icon }) => (
           <Card className="shadow-[var(--shadow-card)]" key={n}>
             <CardHeader className="gap-4">
-              <div className="flex size-11 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-subtle)]">
+              <div className="flex size-11 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--palette-white)]">
                 <Icon aria-hidden className="size-5 text-[var(--color-primary)]" />
               </div>
               <CardTitle className="text-lg leading-snug">
