@@ -2,9 +2,9 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function ImpactStatCard({ label, value }) {
   return (
-    <Card className="bg-[var(--palette-white)]">
-      <CardContent className="flex min-h-28 flex-col justify-between gap-3 px-7 py-6">
-        <p className="text-2xl font-bold leading-none text-[var(--palette-black)]">
+    <Card className="min-w-0 bg-[var(--palette-white)]">
+      <CardContent className="flex min-h-28 min-w-0 flex-col justify-between gap-3 px-5 py-6">
+        <p className="min-w-0 whitespace-nowrap text-[clamp(1.25rem,2vw,1.5rem)] font-bold leading-none tracking-tight text-[var(--palette-black)]">
           {value}
         </p>
         <p className="text-caption font-medium leading-relaxed text-[var(--color-muted-foreground)]">
