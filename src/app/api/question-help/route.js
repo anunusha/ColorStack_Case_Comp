@@ -8,6 +8,19 @@ import {
 const GEMINI_API_BASE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_HISTORY_MESSAGES = 20;
+const SAFETY_SETTINGS = [
+  { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_ONLY_HIGH" },
+  { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_ONLY_HIGH" },
+  {
+    category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    threshold: "BLOCK_ONLY_HIGH",
+  },
+  { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_ONLY_HIGH" },
+];
+
+function withDisclaimer(message) {
+  return `${message} I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.`;
+}
 
 export async function POST(request) {
   let payload;
@@ -83,6 +96,7 @@ Respond to the latest user message only.`;
             maxOutputTokens: 320,
             temperature: 0.2,
           },
+          safetySettings: SAFETY_SETTINGS,
         }),
       }
     );
@@ -92,13 +106,55 @@ Respond to the latest user message only.`;
     }
 
     const data = await response.json();
-    const reply =
-      data.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text)
-        .filter(Boolean)
-        .join("\n")
-        .trim() ||
-      "I can help explain what this question means and how to think through it. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.";
+    console.log("Gemini question-help response:", {
+      promptBlockReason: data?.promptFeedback?.blockReason ?? null,
+      candidateCount: Array.isArray(data?.candidates) ? data.candidates.length : 0,
+      firstFinishReason: data?.candidates?.[0]?.finishReason ?? null,
+    });
+
+    if (data?.promptFeedback?.blockReason) {
+      return NextResponse.json({
+        reply: withDisclaimer(
+          "I had trouble processing that phrasing. Try asking about one term in this question, or describe your situation in one short sentence."
+        ),
+        source: "blocked_prompt",
+      });
+    }
+
+    if (!Array.isArray(data?.candidates) || data.candidates.length === 0) {
+      return NextResponse.json({
+        reply: withDisclaimer(
+          "I could not generate a response just now. Try rephrasing your question in simpler terms."
+        ),
+        source: "empty_candidates",
+      });
+    }
+
+    const candidate = data.candidates[0];
+
+    if (candidate.finishReason === "SAFETY") {
+      return NextResponse.json({
+        reply: withDisclaimer(
+          "I cannot answer that exact phrasing. Try asking about one option label from this question and I can help map your situation to it."
+        ),
+        source: "blocked_safety",
+      });
+    }
+
+    const reply = candidate.content?.parts
+      ?.map((part) => part.text)
+      .filter(Boolean)
+      .join("\n")
+      .trim();
+
+    if (!reply) {
+      return NextResponse.json({
+        reply: withDisclaimer(
+          "I got an empty response. Try asking again with fewer details in one sentence."
+        ),
+        source: "empty_text",
+      });
+    }
 
     return NextResponse.json({ reply, source: "gemini" });
   } catch (error) {
