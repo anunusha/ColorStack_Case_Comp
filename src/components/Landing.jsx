@@ -7,18 +7,16 @@ import FaqStrip from "@/components/landing/FaqStrip";
 import HowItWorksSteps from "@/components/landing/HowItWorksSteps";
 import PageShell from "@/components/PageShell";
 import exampleAnswers from "@/data/example_answers.json";
+import { useTranslation } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const barriers = [
-  "Plain-English questions instead of CRA jargon",
-  "No accounts, no stored answers, no personal data collection",
-  "A checklist you can bring to a free filing clinic or trusted helper",
-];
+const barrierKeys = ["landing.barriers.1", "landing.barriers.2", "landing.barriers.3"];
 
 export default function Landing() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   function loadExample() {
     window.sessionStorage.setItem("taxbridge-intake", JSON.stringify(exampleAnswers.student));
@@ -31,23 +29,22 @@ export default function Landing() {
         <div className="grid gap-10">
           <div className="grid gap-5">
             <Badge className="w-fit" variant="secondary">
-              The hidden cost of not knowing
+              {t("landing.hero.badge")}
             </Badge>
             <h1 className="max-w-3xl text-display text-[var(--color-foreground)]">
-              Most students leave <span className="text-[var(--color-primary)]">$400-$1,500</span> in tax
-              credits unclaimed every year.
+              {t("landing.hero.stat")}
             </h1>
             <p className="max-w-2xl text-body-lg text-[var(--color-muted-foreground)]">
-              TaxBridge tells you what you&apos;re missing in 5 minutes.
+              {t("landing.hero.subtitle")}
             </p>
           </div>
 
           <div className="grid gap-3 sm:max-w-xl sm:grid-cols-2">
             <Button className="h-12" onClick={() => router.push("/intake/student")}>
-              I&apos;m a student
+              {t("landing.cta.student")}
             </Button>
             <Button className="h-12" onClick={() => router.push("/intake/dtc")} variant="outline">
-              I&apos;m exploring the DTC
+              {t("landing.cta.dtc")}
             </Button>
           </div>
 
@@ -56,22 +53,19 @@ export default function Landing() {
             onClick={loadExample}
             type="button"
           >
-            See what an example student gets back &#8594;
+            {t("landing.example.cta")}
           </button>
         </div>
 
         <Card className="border-[var(--color-border)] shadow-[var(--shadow-card)]">
           <CardHeader className="gap-3">
             <Badge className="w-fit" variant="secondary">
-              Prototype impact
+              {t("landing.card.badge")}
             </Badge>
-            <CardTitle className="text-3xl">Built to close the awareness gap.</CardTitle>
+            <CardTitle className="text-3xl">{t("landing.card.title")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-6">
-            <p className="leading-7 text-[var(--color-muted-foreground)]">
-              Many people miss credits because the system assumes they already know the forms, lines, and
-              benefit names. TaxBridge starts with life situations instead.
-            </p>
+            <p className="leading-7 text-[var(--color-muted-foreground)]">{t("landing.card.body")}</p>
             <CounterDisplay />
           </CardContent>
         </Card>
@@ -82,20 +76,18 @@ export default function Landing() {
       <section className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div className="grid gap-2">
           <Badge className="w-fit" variant="secondary">
-            Why it helps
+            {t("landing.why.badge")}
           </Badge>
-          <h2 className="text-section-title text-[var(--color-foreground)]">
-            TaxBridge turns uncertainty into next steps.
-          </h2>
+          <h2 className="text-section-title text-[var(--color-foreground)]">{t("landing.why.title")}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {barriers.map((barrier) => (
+          {barrierKeys.map((key) => (
             <Card
               className="border-[var(--color-border)] bg-[var(--palette-white)] shadow-sm"
-              key={barrier}
+              key={key}
             >
               <CardContent className="p-5">
-                <p className="font-semibold leading-7 text-[var(--color-foreground)]">{barrier}</p>
+                <p className="font-semibold leading-7 text-[var(--color-foreground)]">{t(key)}</p>
               </CardContent>
             </Card>
           ))}
@@ -105,12 +97,8 @@ export default function Landing() {
       <FaqStrip />
 
       <footer className="rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] p-6 text-caption leading-relaxed text-[var(--color-muted-foreground)]">
-        <p className="font-semibold text-[var(--color-foreground)]">Disclosures</p>
-        <p className="mt-2">
-          TaxBridge is an educational prototype—not tax, legal, or financial advice. Estimates are for demo
-          purposes only; eligibility depends on your full return and CRA rules. Always verify credits with
-          official guidance or a qualified professional before filing.
-        </p>
+        <p className="font-semibold text-[var(--color-foreground)]">{t("landing.disclosures.title")}</p>
+        <p className="mt-2">{t("landing.disclosures.body")}</p>
       </footer>
     </PageShell>
   );

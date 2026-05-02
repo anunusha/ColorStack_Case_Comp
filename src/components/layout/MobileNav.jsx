@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import LanguageToggle from "@/components/LanguageToggle";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/intake/student", label: "Student" },
-  { href: "/intake/dtc", label: "DTC" },
-  { href: "/results", label: "Results" },
+  { href: "/", labelKey: "nav.home" },
+  { href: "/intake/student", labelKey: "nav.student" },
+  { href: "/intake/dtc", labelKey: "nav.dtc" },
+  { href: "/results", labelKey: "nav.results" },
 ];
 
 export default function MobileNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--color-sidebar-border)] bg-[var(--color-sidebar)] md:hidden">
@@ -21,12 +24,13 @@ export default function MobileNav() {
         <Link className="font-brand text-lg font-semibold text-[var(--color-foreground)]" href="/">
           TaxBridge
         </Link>
+        <LanguageToggle />
       </div>
       <nav
         aria-label="Primary"
         className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {links.map(({ href, label }) => {
+        {links.map(({ href, labelKey }) => {
           const active =
             href === "/"
               ? pathname === "/"
@@ -43,7 +47,7 @@ export default function MobileNav() {
               href={href}
               key={href}
             >
-              {label}
+              {t(labelKey)}
             </Link>
           );
         })}

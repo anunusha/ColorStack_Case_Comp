@@ -13,24 +13,29 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import LanguageToggle from "@/components/LanguageToggle";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-const trackLinks = [{ href: "/", label: "Home", icon: Home }];
+const trackLinks = [{ href: "/", labelKey: "sidebar.track.home", icon: Home }];
 
 const serviceLinks = [
-  { href: "/intake/student", label: "Student pathway", icon: GraduationCap },
-  { href: "/intake/dtc", label: "DTC pathway", icon: HeartPulse },
-  { href: "/results", label: "Results", icon: ClipboardList },
+  { href: "/intake/student", labelKey: "sidebar.service.student", icon: GraduationCap },
+  { href: "/intake/dtc", labelKey: "sidebar.service.dtc", icon: HeartPulse },
+  { href: "/results", labelKey: "sidebar.service.results", icon: ClipboardList },
 ];
 
-function NavGroup({ title, items, pathname }) {
+function NavGroup({ titleKey, items, pathname }) {
+  const { t } = useTranslation();
+  const navTitle = t(titleKey);
+
   return (
     <div className="grid gap-2">
       <p className="text-caption px-3 font-semibold uppercase tracking-wider text-[var(--color-sidebar-muted)]">
-        {title}
+        {navTitle}
       </p>
-      <nav aria-label={title} className="grid gap-1">
-        {items.map(({ href, label, icon: Icon }) => {
+      <nav aria-label={navTitle} className="grid gap-1">
+        {items.map(({ href, labelKey, icon: Icon }) => {
           const active =
             href === "/"
               ? pathname === "/"
@@ -54,7 +59,7 @@ function NavGroup({ title, items, pathname }) {
                   active ? "text-[var(--color-primary)]" : "opacity-80"
                 )}
               />
-              {label}
+              {t(labelKey)}
             </Link>
           );
         })}
@@ -65,6 +70,7 @@ function NavGroup({ title, items, pathname }) {
 
 export default function AppSidebar({ className }) {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -105,11 +111,11 @@ export default function AppSidebar({ className }) {
       >
         <Link className="inline-block" href="/">
           <span className="font-brand text-2xl font-semibold tracking-tight text-[var(--color-foreground)]">
-            {collapsed ? "TB" : "TaxBridge"}
+            {collapsed ? t("sidebar.brand_short") : "TaxBridge"}
           </span>
         </Link>
         <button
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
           className="mt-1 inline-flex size-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--palette-white)] text-[var(--color-muted-foreground)] transition hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
           onClick={toggle}
           type="button"
@@ -120,16 +126,16 @@ export default function AppSidebar({ className }) {
 
       <div className="flex flex-1 flex-col gap-8 px-1">
         <div className={collapsed ? "hidden" : "block"}>
-          <NavGroup items={trackLinks} pathname={pathname} title="Guide" />
+          <NavGroup items={trackLinks} pathname={pathname} titleKey="sidebar.guide" />
         </div>
-        <div className={collapsed ? "grid gap-1" : "hidden"} aria-label="Guide">
-          {trackLinks.map(({ href, label, icon: Icon }) => {
+        <div className={collapsed ? "grid gap-1" : "hidden"} aria-label={t("sidebar.guide")}>
+          {trackLinks.map(({ href, labelKey, icon: Icon }) => {
             const active = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
                 key={href}
                 href={href}
-                title={label}
+                title={t(labelKey)}
                 className={cn(
                   "flex items-center justify-center rounded-lg px-3 py-2.5 transition-colors",
                   active ? "bg-[var(--color-secondary)]" : "hover:bg-[var(--color-muted)]"
@@ -142,16 +148,16 @@ export default function AppSidebar({ className }) {
         </div>
 
         <div className={collapsed ? "hidden" : "block"}>
-          <NavGroup items={serviceLinks} pathname={pathname} title="Services" />
+          <NavGroup items={serviceLinks} pathname={pathname} titleKey="sidebar.services" />
         </div>
-        <div className={collapsed ? "grid gap-1" : "hidden"} aria-label="Services">
-          {serviceLinks.map(({ href, label, icon: Icon }) => {
+        <div className={collapsed ? "grid gap-1" : "hidden"} aria-label={t("sidebar.services")}>
+          {serviceLinks.map(({ href, labelKey, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
                 key={href}
                 href={href}
-                title={label}
+                title={t(labelKey)}
                 className={cn(
                   "flex items-center justify-center rounded-lg px-3 py-2.5 transition-colors",
                   active ? "bg-[var(--color-secondary)]" : "hover:bg-[var(--color-muted)]"
@@ -164,13 +170,16 @@ export default function AppSidebar({ className }) {
         </div>
       </div>
 
-      <div className="mt-auto px-1 pt-6">
+      <div className="mt-auto grid gap-3 px-1 pt-6">
+        <div className={collapsed ? "flex justify-center" : ""}>
+          <LanguageToggle />
+        </div>
         <Link
           className="flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] px-3 py-3 text-sm font-semibold text-[var(--color-foreground)] shadow-sm transition hover:bg-[var(--color-muted)]"
           href="/intake/student"
         >
           <Sparkles className="size-4 text-[var(--color-primary)]" aria-hidden />
-          <span className={collapsed ? "sr-only" : "inline"}>Get guidance</span>
+          <span className={collapsed ? "sr-only" : "inline"}>{t("sidebar.get_guidance")}</span>
         </Link>
       </div>
     </aside>

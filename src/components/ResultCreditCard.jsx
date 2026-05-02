@@ -1,8 +1,12 @@
+"use client";
+
+import { useTranslation } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export default function ResultCreditCard({ credit, formattedDollars }) {
+  const { t } = useTranslation();
   const explanation =
     credit.plain_english_explanation ?? credit.fallback_explanation;
 
@@ -12,7 +16,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div className="grid gap-2">
             <Badge className="w-fit" variant="secondary">
-              Likely match
+              {t("creditCard.likely_match")}
             </Badge>
             <CardTitle className="text-2xl">{credit.name}</CardTitle>
           </div>
@@ -22,9 +26,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
         </div>
       </CardHeader>
       <CardContent className="grid gap-6">
-        <p className="leading-7 text-[var(--color-muted-foreground)]">
-          {explanation}
-        </p>
+        <p className="leading-7 text-[var(--color-muted-foreground)]">{explanation}</p>
         {credit.computed_estimate?.disclaimer ? (
           <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
             {credit.computed_estimate.disclaimer}
@@ -34,7 +36,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="bg-[var(--palette-white)]">
             <CardHeader>
-              <CardTitle className="text-lg">Documents to gather</CardTitle>
+              <CardTitle className="text-lg">{t("creditCard.documents")}</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
@@ -46,7 +48,7 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
           </Card>
           <Card className="bg-[var(--palette-white)]">
             <CardHeader>
-              <CardTitle className="text-lg">Where it goes</CardTitle>
+              <CardTitle className="text-lg">{t("creditCard.where_it_goes")}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
@@ -59,4 +61,3 @@ export default function ResultCreditCard({ credit, formattedDollars }) {
     </Card>
   );
 }
-

@@ -4,9 +4,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { explainCredits } from "@/lib/claudeClient";
-import { matchCredits } from "@/lib/matchingEngine";
-import { incrementCounters } from "@/lib/supabaseClient";
 import DeepLinkDialog from "@/components/DeepLinkDialog";
 import EmptyState from "@/components/EmptyState";
 import NextStepsCTA from "@/components/NextStepsCTA";
@@ -14,15 +11,15 @@ import PageShell from "@/components/PageShell";
 import { generatePDF } from "@/components/PDFChecklist";
 import ResultCreditCard from "@/components/ResultCreditCard";
 import SectionHeader from "@/components/SectionHeader";
+import { explainCredits } from "@/lib/claudeClient";
+import { useTranslation } from "@/lib/i18n";
+import { mergeLocalizedCredits } from "@/lib/localizedData";
+import { matchCredits } from "@/lib/matchingEngine";
+import { incrementCounters } from "@/lib/supabaseClient";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const audienceLabels = {
-  student: "student",
-  dtc: "DTC",
-};
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat("en-CA", {
@@ -32,7 +29,14 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+function audienceResultLabel(t, audience) {
+  if (audience === "student") return t("results.audience.student");
+  if (audience === "dtc") return t("results.audience.dtc");
+  return t("results.audience.fallback");
+}
+
 export default function ResultsPage() {
+  const { t, lang } = useTranslation();
   const searchParams = useSearchParams();
   const isExample = searchParams.get("example") === "true";
   const [eligibleCredits, setEligibleCredits] = useState([]);
@@ -88,9 +92,16 @@ export default function ResultsPage() {
 
       try {
         const matchedCredits = matchCredits(intakeData.audience, intakeData.answers);
-        const explainedCredits = await explainCredits(matchedCredits, {
+        const localizedCredits = mergeLocalizedCredits(
+          matchedCredits,
+          intakeData.audience,
+          lang,
+          intakeData.answers
+        );
+        const explainedCredits = await explainCredits(localizedCredits, {
           audience: intakeData.audience,
           answers: intakeData.answers,
+          lang,
         });
 
         if (isCancelled) {
@@ -134,34 +145,38 @@ export default function ResultsPage() {
     return () => {
       isCancelled = true;
     };
-  }, [intakeData, intakeSessionKey, isExample]);
+  }, [intakeData, intakeSessionKey, isExample, lang]);
 
   if (!intakeData && !isLoading) {
     return (
       <PageShell className="max-w-4xl">
         <EmptyState
-          description="Results are generated from answers stored only in this browser session. Start a pathway to create your checklist."
-          primaryAction={{ href: "/", label: "Go to landing page" }}
-          title="Start with a few questions first."
+          description={t("results.empty.description")}
+          primaryAction={{ href: "/", label: t("results.empty.cta") }}
+          title={t("results.empty.title")}
         />
       </PageShell>
     );
   }
 
+  const audienceKey = intakeData?.audience;
+
   return (
     <PageShell>
       <Button asChild className="mb-8 w-fit" variant="link">
-        <Link href="/">Back to home</Link>
+        <Link href="/">{t("results.back_home")}</Link>
       </Button>
 
       {isExample ? (
         <Card className="mb-8 border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_10%,white)] shadow-sm">
           <CardContent className="p-4 text-sm leading-6 text-[var(--color-foreground)]">
-            <span className="font-semibold">Example results</span> - showing what{" "}
-            <span className="font-semibold">{intakeData?.persona_label ?? "an example student"}</span> would
-            see.{" "}
+            <span className="font-semibold">{t("results.example.label")}</span> {t("results.example.lead")}{" "}
+            <span className="font-semibold">
+              {intakeData?.persona_label ?? t("results.example.persona_fallback")}
+            </span>{" "}
+            {t("results.example.would_see")}{" "}
             <Link className="font-semibold underline" href="/">
-              Try with your own info &#8594;
+              {t("results.example.cta")}
             </Link>
           </CardContent>
         </Card>
@@ -171,17 +186,19 @@ export default function ResultsPage() {
         <SectionHeader
           badge={
             <Badge className="w-fit" variant="secondary">
-              Results for {audienceLabels[intakeData?.audience] ?? "your pathway"}
+              {t("results.badge", {
+                audience: audienceResultLabel(t, audienceKey),
+              })}
             </Badge>
           }
-          title="Your likely credits and next steps"
-          description="These are prototype estimates based on your answers. Review them before filing and use the documents list as a starting checklist."
+          title={t("results.title")}
+          description={t("results.description")}
         />
 
         <Card className="border-[var(--color-border)] shadow-sm">
           <CardHeader className="gap-2">
             <CardTitle className="text-base text-[var(--color-muted-foreground)]">
-              Estimated total surfaced
+              {t("results.estimated_total_label")}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-2">
@@ -189,7 +206,7 @@ export default function ResultsPage() {
               {isLoading ? "..." : formatCurrency(estimatedTotal)}
             </p>
             <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
-              Amounts are rough estimates for demo purposes, not guaranteed refund values.
+              {t("results.estimated_note")}
             </p>
           </CardContent>
         </Card>
@@ -198,9 +215,7 @@ export default function ResultsPage() {
       {isLoading ? (
         <Card className="mt-10 border-[var(--color-border)] shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">
-              Matching credits and drafting plain-English explanations...
-            </CardTitle>
+            <CardTitle className="text-lg">{t("results.loading")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             {[1, 2].map((item) => (
@@ -211,25 +226,25 @@ export default function ResultsPage() {
       ) : loadError ? (
         <div className="mt-10">
           <EmptyState
-            description="Something went wrong while generating your results in this browser session. You can safely try again."
+            description={t("results.error.description")}
             primaryAction={{
               href: `/intake/${intakeData?.audience ?? "student"}`,
-              label: "Retake intake",
+              label: t("results.retake"),
             }}
-            secondaryAction={{ href: "/", label: "Back to home" }}
-            title="We couldn't generate results."
+            secondaryAction={{ href: "/", label: t("results.back_home") }}
+            title={t("results.error.title")}
           />
         </div>
       ) : eligibleCredits.length === 0 ? (
         <div className="mt-10">
           <EmptyState
-            description="Your answers did not trigger the current credit matching rules. You can still file a return, review CRA guidance, or retake the intake if something was answered incorrectly."
+            description={t("results.no_matches.description")}
             primaryAction={{
               href: `/intake/${intakeData?.audience ?? "student"}`,
-              label: "Retake intake",
+              label: t("results.retake"),
             }}
-            secondaryAction={{ href: "/", label: "Back to home" }}
-            title="No strong matches yet."
+            secondaryAction={{ href: "/", label: t("results.back_home") }}
+            title={t("results.no_matches.title")}
           />
         </div>
       ) : (
@@ -243,7 +258,7 @@ export default function ResultsPage() {
                   credit.computed_estimate?.display ??
                   (typeof credit.estimated_dollars === "number"
                     ? formatCurrency(credit.estimated_dollars)
-                    : "Not estimated")
+                    : t("results.not_estimated"))
                 }
                 key={credit.id}
               />
@@ -254,25 +269,23 @@ export default function ResultsPage() {
 
       <Card className="mt-8 border-[var(--color-border)] shadow-sm">
         <CardHeader className="gap-2">
-          <CardTitle className="text-xl">Downloadable checklist</CardTitle>
-          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
-            Review before generating so you can cancel if needed.
-          </p>
+          <CardTitle className="text-xl">{t("results.pdf.title")}</CardTitle>
+          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">{t("results.pdf.note")}</p>
         </CardHeader>
         <CardContent>
           {isLoading || eligibleCredits.length === 0 ? (
             <Button disabled variant="secondary">
-              Download PDF
+              {t("results.pdf.download")}
             </Button>
           ) : (
             <DeepLinkDialog
-              confirmLabel="Generate PDF"
-              description="This will download your checklist locally. You can cancel now if you need to review your results first."
+              confirmLabel={t("results.pdf.modal.confirm")}
+              description={t("results.pdf.modal.description")}
               modalKey="download-checklist"
-              onConfirm={() => generatePDF(intakeData?.audience, eligibleCredits)}
-              title="Generate checklist PDF?"
+              onConfirm={() => generatePDF(intakeData?.audience, eligibleCredits, lang, t)}
+              title={t("results.pdf.modal.title")}
             >
-              Download PDF
+              {t("results.pdf.download")}
             </DeepLinkDialog>
           )}
         </CardContent>

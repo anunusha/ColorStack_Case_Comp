@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useTranslation } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import {
 const SESSION_MESSAGE_LIMIT = 20;
 
 export default function QuestionHelpBot({ question, audience, isOpen, onClose }) {
+  const { lang, t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +43,7 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
         { role: "user", content: trimmed },
         {
           role: "assistant",
-          content:
-            "You have reached your help limit for this session. You can continue the intake now and use the CRA guidance link in the footer for deeper details. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.",
+          content: t("help.limit_reached"),
         },
       ]);
       setInput("");
@@ -62,6 +63,7 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
         body: JSON.stringify({
           question,
           audience,
+          lang,
           messages: nextMessages,
         }),
       });
@@ -77,9 +79,7 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
         ...previous,
         {
           role: "assistant",
-          content:
-            reply ||
-            "I could not generate help right now. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.",
+          content: reply || t("help.error_empty"),
         },
       ]);
     } catch (error) {
@@ -88,8 +88,7 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
         ...previous,
         {
           role: "assistant",
-          content:
-            "Sorry, I could not process that right now. You can continue the intake and check the CRA guidance link in the footer. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.",
+          content: t("help.error_network"),
         },
       ]);
     } finally {
@@ -104,29 +103,26 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
     }
   }
 
+  const remaining = Math.max(SESSION_MESSAGE_LIMIT - totalSessionMessages, 0);
+
   return (
     <Dialog onOpenChange={(open) => (!open ? onClose() : null)} open={isOpen}>
-      <DialogContent className="fixed bottom-0 left-0 right-0 top-auto h-[80vh] w-full translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none border-[var(--color-border)] bg-[var(--color-card)] p-0 text-[var(--color-card-foreground)] data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:max-w-none md:bottom-0 md:left-auto md:right-0 md:top-0 md:h-screen md:w-[28rem] md:rounded-none md:border-l md:border-t-0 md:data-[state=closed]:slide-out-to-right md:data-[state=open]:slide-in-from-right">
+      <DialogContent className="fixed bottom-0 left-0 right-0 top-auto h-[80vh] w-full translate-x-0 translate-y-0 rounded-t-2xl rounded-b-none p-0 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:max-w-none md:bottom-0 md:left-auto md:right-0 md:top-0 md:h-screen md:w-[28rem] md:rounded-none md:border-l md:border-t-0 md:data-[state=closed]:slide-out-to-right md:data-[state=open]:slide-in-from-right">
         <div className="flex h-full flex-col">
-          <DialogHeader className="border-b border-[var(--color-border)] px-4 py-4">
+          <DialogHeader className="border-b border-slate-200 px-4 py-4">
             <div className="flex items-center justify-between gap-3">
               <div className="grid gap-1">
-                <DialogTitle className="text-lg">Help with this question</DialogTitle>
-                <DialogDescription>
-                  Scoped only to the current question on screen.
-                </DialogDescription>
+                <DialogTitle className="text-lg">{t("help.title")}</DialogTitle>
+                <DialogDescription>{t("help.description")}</DialogDescription>
               </div>
-              <Badge variant="secondary">
-                {Math.max(SESSION_MESSAGE_LIMIT - totalSessionMessages, 0)} left
-              </Badge>
+              <Badge variant="secondary">{t("help.remaining", { count: remaining })}</Badge>
             </div>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto px-4 py-4">
             {messages.length === 0 ? (
-              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] p-4 text-sm text-[var(--color-muted-foreground)]">
-                Ask about this question, for example: &quot;What does this mean?&quot; or &quot;How should I
-                think about my situation?&quot;
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                {t("help.example_prompt")}
               </div>
             ) : (
               <div className="grid gap-3">
@@ -134,8 +130,8 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
                   <div
                     className={
                       message.role === "user"
-                        ? "ml-6 rounded-xl border border-[color-mix(in_oklab,var(--palette-sapphire)_35%,white)] bg-[color-mix(in_oklab,var(--palette-sapphire)_12%,white)] px-3 py-2 text-sm text-[var(--color-foreground)]"
-                        : "mr-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-2 text-sm text-[var(--color-foreground)]"
+                        ? "ml-6 rounded-xl bg-blue-50 px-3 py-2 text-sm"
+                        : "mr-6 rounded-xl bg-slate-100 px-3 py-2 text-sm"
                     }
                     key={`${message.role}-${index}`}
                   >
@@ -146,26 +142,26 @@ export default function QuestionHelpBot({ question, audience, isOpen, onClose })
             )}
 
             {isLoading ? (
-              <div className="mr-6 mt-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
-                Thinking...
+              <div className="mr-6 mt-3 rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-500">
+                {t("help.thinking")}
               </div>
             ) : null}
 
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t border-[var(--color-border)] p-4">
+          <div className="border-t border-slate-200 p-4">
             <div className="flex gap-2">
               <input
-                className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] px-3 py-2 text-sm text-[var(--color-foreground)] outline-none ring-offset-2 ring-offset-[var(--color-card)] focus:ring-2 focus:ring-[var(--color-ring)]"
+                className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none ring-offset-2 focus:ring-2 focus:ring-slate-400"
                 disabled={isLoading}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about this question..."
+                placeholder={t("help.placeholder")}
                 value={input}
               />
               <Button disabled={!input.trim() || isLoading} onClick={handleSend} type="button">
-                Send
+                {t("help.send")}
               </Button>
             </div>
           </div>

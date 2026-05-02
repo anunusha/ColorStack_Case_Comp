@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { CircleHelp } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import dtcQuestions from "@/data/dtc_questions.json";
-import studentQuestions from "@/data/student_questions.json";
 import PageShell from "@/components/PageShell";
+import { useTranslation } from "@/lib/i18n";
+import { getQuestionsForAudience } from "@/lib/localizedData";
 import QuestionHelpBot from "@/components/QuestionHelpBot";
 import QuestionCard from "@/components/QuestionCard";
 import SectionHeader from "@/components/SectionHeader";
@@ -14,16 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-
-const questionSets = {
-  student: studentQuestions,
-  dtc: dtcQuestions,
-};
-
-const audienceLabels = {
-  student: "student",
-  dtc: "DTC applicant",
-};
 
 function isConditionMatch(answerValue, expectedValue) {
   if (Array.isArray(answerValue)) {
@@ -74,12 +64,13 @@ export default function IntakeFlow({ audience }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t, lang } = useTranslation();
   const questions = useMemo(
     () =>
-      [...(questionSets[audience] ?? [])].sort(
+      [...(getQuestionsForAudience(audience, lang) ?? [])].sort(
         (a, b) => (a.order ?? 0) - (b.order ?? 0)
       ),
-    [audience]
+    [audience, lang]
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -93,7 +84,7 @@ export default function IntakeFlow({ audience }) {
       <PageShell className="max-w-4xl">
         <Card className="border-[color-mix(in_oklab,var(--palette-blush)_55%,var(--palette-white))] bg-[color-mix(in_oklab,var(--palette-blush)_10%,white)]">
           <CardContent className="p-6 font-semibold text-[var(--palette-blush)]">
-            We do not have an intake flow for this audience yet.
+            {t("intake.no_flow")}
           </CardContent>
         </Card>
       </PageShell>
@@ -225,7 +216,7 @@ export default function IntakeFlow({ audience }) {
           min={currentQuestion.ui_hints?.min}
           max={currentQuestion.ui_hints?.max}
           onChange={(event) => selectAnswer(event.target.value)}
-          placeholder={currentQuestion.ui_hints?.placeholder ?? "Enter a number"}
+          placeholder={currentQuestion.ui_hints?.placeholder ?? t("intake.placeholder_number")}
           type="number"
           value={currentAnswer ?? ""}
         />
@@ -236,7 +227,7 @@ export default function IntakeFlow({ audience }) {
       return (
         <div className="grid gap-3">
           <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
-            Select one option
+            {t("intake.select_one")}
           </p>
           <div className="max-h-72 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--palette-white)] p-3">
             <div className="grid gap-2">
@@ -263,7 +254,7 @@ export default function IntakeFlow({ audience }) {
     return (
       <Card className="border-[color-mix(in_oklab,var(--palette-blush)_55%,var(--palette-white))] bg-[color-mix(in_oklab,var(--palette-blush)_10%,white)]">
         <CardContent className="p-4 text-sm font-semibold text-[var(--palette-blush)]">
-          Unsupported question type: {currentQuestion.answer_type}
+          {t("intake.unsupported_type")} {currentQuestion.answer_type}
         </CardContent>
       </Card>
     );
@@ -272,17 +263,17 @@ export default function IntakeFlow({ audience }) {
   return (
     <PageShell className="max-w-4xl">
       <Button className="mb-8 w-fit" onClick={() => router.push("/")} variant="link">
-        Back to home
+        {t("intake.back_home")}
       </Button>
 
       <SectionHeader
         badge={
           <Badge className="w-fit" variant="secondary">
-            Intake for {audienceLabels[audience]}
+            {audience === "student" ? t("intake.badge.student") : t("intake.badge.dtc")}
           </Badge>
         }
-        title="Answer a few plain-English questions."
-        description="We will use your answers only in this browser session to estimate which credits may be worth reviewing. Nothing is stored on a server."
+        title={t("intake.title")}
+        description={t("intake.description")}
       />
 
       <Card className="mt-10 border-[var(--color-border)] shadow-[var(--shadow-card)]">
@@ -290,7 +281,10 @@ export default function IntakeFlow({ audience }) {
           <div className="grid gap-3">
             <div className="flex items-center justify-between gap-4 text-sm font-semibold text-[var(--color-muted-foreground)]">
               <span>
-                Question {effectiveIndex + 1} of {totalQuestionCount}
+                {t("intake.question_progress", {
+                  current: effectiveIndex + 1,
+                  total: totalQuestionCount,
+                })}
               </span>
               <span>{Math.round(progressPercent)}%</span>
             </div>
@@ -300,10 +294,10 @@ export default function IntakeFlow({ audience }) {
           <QuestionCard
             action={
               <Button
-                aria-label="Get help with this question"
+                aria-label={t("intake.help_aria")}
                 className="h-8 w-8 rounded-full p-0"
                 onClick={openHelp}
-                title="Not sure? Ask for help"
+                title={t("intake.help_title")}
                 variant="outline"
               >
                 <CircleHelp className="h-4 w-4" />
@@ -317,10 +311,10 @@ export default function IntakeFlow({ audience }) {
 
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
             <Button disabled={isFirstQuestion} onClick={goBack} variant="outline">
-              Back
+              {t("intake.back")}
             </Button>
             <Button disabled={!isAnswered(currentQuestion, currentAnswer)} onClick={goNext}>
-              {isLastQuestion ? "See my results" : "Next"}
+              {isLastQuestion ? t("intake.see_results") : t("intake.next")}
             </Button>
           </div>
         </CardContent>

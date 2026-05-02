@@ -1,0 +1,417 @@
+[
+  {
+    "id": "tuition_credit",
+    "audience": "student",
+    "name": "ट्यूशन टैक्स क्रेडिट",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "tuition_amount_paid * 0.15",
+      "disclaimer": "केवल संघीय अनुमान। प्रांतीय अनुपूरक प्रांत के अनुसार बदलता है; Alberta, Ontario या Saskatchewan के लिए प्रांतीय हिस्से का अनुमान न लगाएँ।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "paid_tuition_2024",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "tuition_amount_paid",
+          "operator": "greater_than",
+          "value": 100
+        },
+        {
+          "question_id": "has_t2202",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "had_tax_payable_2024",
+          "operator": "includes",
+          "value": [
+            "owed_taxes",
+            "got_refund",
+            "not_sure_with_income"
+          ]
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "आपके स्कूल से T2202 फॉर्म, या विदेश में पढ़ाई के लिए TL11 फॉर्म",
+      "आपके रिकॉर्ड के लिए ट्यूशन भुगतान रसीदें",
+      "आपके टैक्स सॉफ़्टवेयर या रिटर्न से Schedule 11"
+    ],
+    "filing_destination": "आपके T1 रिटर्न की पंक्ति 32300; Schedule 11 पूरा करें",
+    "fallback_explanation": "यदि आपने 2024 में योग्य ट्यूशन फीस का भुगतान किया है, तो हो सकता है कि आप उन फीस का 15% तक का गैर-वापसी योग्य संघीय क्रेडिट दावा कर सकें। रिफंड का मतलब स्वचालित रूप से यह नहीं कि आपके ट्यूशन क्रेडिट अप्रयुक्त थे—Schedule 11 या Notice of Assessment जाँचें। Alberta, Ontario और Saskatchewan वर्तमान में 2024 के लिए प्रांतीय ट्यूशन क्रेडिट नहीं जोड़ते।",
+    "ui_priority": 10,
+    "tags": [
+      "education",
+      "non_refundable",
+      "federal_and_provincial"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts.html",
+    "maintenance_note": "Provincial tuition rules should be re-verified each tax year."
+  },
+  {
+    "id": "tuition_transfer",
+    "audience": "student",
+    "name": "अप्रयुक्त ट्यूशन माता-पिता, दादा-दादी, जीवनसाथी या सामान्य-कानून साथी को स्थानांतरित करें",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "min(tuition_amount_paid * 0.15, 750)",
+      "disclaimer": "केवल अनुमान। संघीय स्थानांतरण वर्तमान वर्ष की ट्यूशन राशि के $5,000 तक पर आधारित होता है, अपने कर को पहले कम करने के बाद।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "paid_tuition_2024",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "tuition_amount_paid",
+          "operator": "greater_than",
+          "value": 0
+        },
+        {
+          "question_id": "has_t2202",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "had_tax_payable_2024",
+          "operator": "includes",
+          "value": [
+            "not_sure_low_income"
+          ]
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 या TL11 फॉर्म",
+      "स्थानांतरण योग्य राशि दिखाने वाला पूरा Schedule 11",
+      "यदि टैक्स सॉफ़्टवेयर आवश्यक हो तो स्थानांतरण ग्रहणकर्ता का नाम और SIN"
+    ],
+    "filing_destination": "Schedule 11; स्थानांतरित राशि का दावा समर्थन करने वाला व्यक्ति करता है",
+    "fallback_explanation": "यदि आपने ट्यूशन का भुगतान किया लेकिन अपने कर को कम करने के लिए पूरे क्रेडिट की आवश्यकता नहीं थी, तो हो सकता है कि आप चालू वर्ष की राशि का एक हिस्सा माता-पिता, दादा-दादी, जीवनसाथी या सामान्य-कानून साथी को स्थानांतरित कर सकें। स्थानांतरण सीमित है और पहले आपको अपने कर देय को कम करने के लिए ट्यूशन का उपयोग करना होगा।",
+    "ui_priority": 20,
+    "tags": [
+      "education",
+      "transfer",
+      "non_refundable"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts/transferring-carrying-forward-amounts.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "tuition_carryforward",
+    "audience": "student",
+    "name": "अप्रयुक्त ट्यूशन अगले वर्ष के लिए सुरक्षित रखें",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "tuition_amount_paid * 0.15",
+      "disclaimer": "केवल अनुमान। वास्तविक carryforward Schedule 11 पर उपयोग या स्थानांतरण पर निर्भर करता है।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "paid_tuition_2024",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "tuition_amount_paid",
+          "operator": "greater_than",
+          "value": 0
+        },
+        {
+          "question_id": "has_t2202",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "had_tax_payable_2024",
+          "operator": "includes",
+          "value": [
+            "not_sure_low_income"
+          ]
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 या TL11 फॉर्म",
+      "Schedule 11",
+      "अप्रयुक्त ट्यूशन राशि दिखाने वाली Notice of Assessment"
+    ],
+    "filing_destination": "Schedule 11 और भविष्य के कर वर्षों के रिटर्न",
+    "fallback_explanation": "यदि आपको इस वर्ष अपने सभी 2024 ट्यूशन क्रेडिट की आवश्यकता नहीं है, तो अप्रयुक्त राशि आम तौर पर आगे के वर्ष में उपयोग के लिए सुरक्षित की जा सकती है। आपकी Notice of Assessment भविष्य के वर्षों के लिए उपलब्ध राशि दिखाएगी।",
+    "ui_priority": 30,
+    "tags": [
+      "education",
+      "carryforward",
+      "non_refundable"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-32300-your-tuition-education-textbook-amounts/transferring-carrying-forward-amounts.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "student_loan_interest_credit",
+    "audience": "student",
+    "name": "छात्र ऋण ब्याज क्रेडिट",
+    "category": "federal_and_provincial",
+    "estimated_dollars": {
+      "type": "calculated",
+      "calculation": "student_loan_interest_amount * 0.15",
+      "disclaimer": "केवल संघीय अनुमान यदि आपने राशि दर्ज की। निजी ऋण, लाइन ऑफ़ क्रेडिट, पुनर्गठित या समेकित ऋण पर ब्याज योग्य नहीं।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "paid_student_loan_interest",
+          "operator": "equals",
+          "value": "yes"
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "NSLSC या आपके प्रांतीय ऋण प्रदाता से छात्र ऋण ब्याज विवरण",
+      "2024 या पिछले पाँच वर्षों में चुकाए गए योग्य ब्याज के रिकॉर्ड"
+    ],
+    "filing_destination": "आपके T1 रिटर्न की पंक्ति 31900",
+    "fallback_explanation": "हो सकता है कि आप 2024 या पिछले पाँच वर्षों में सरकारी छात्र ऋण पर चुकाए गए योग्य ब्याज का दावा कर सकें। यह निजी बैंक ऋण या लाइन ऑफ़ क्रेडिट पर लागू नहीं होता; संघीय छात्र ऋण पर 1 अप्रैल 2023 से ब्याज समाप्त हो गया।",
+    "ui_priority": 40,
+    "tags": [
+      "education",
+      "student_loans",
+      "non_refundable"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-31900-interest-paid-on-your-student-loans.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "moving_expenses_deduction",
+    "audience": "student",
+    "name": "चलने के खर्च की कटौती",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "कटौती राशि योग्य चलने की लागत और नए स्कूल स्थान पर योग्य आय पर निर्भर करती है।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "moved_for_school",
+          "operator": "equals",
+          "value": "yes"
+        }
+      ],
+      "any_of": [
+        {
+          "question_id": "income_at_new_school_location",
+          "operator": "includes",
+          "value": "taxable_scholarship"
+        },
+        {
+          "question_id": "income_at_new_school_location",
+          "operator": "includes",
+          "value": "employment_or_self_employment"
+        }
+      ],
+      "none_of": [
+        {
+          "question_id": "income_at_new_school_location",
+          "operator": "includes",
+          "value": "neither"
+        }
+      ]
+    },
+    "documents_needed": [
+      "यात्रा, मूवर्स, अस्थायी आवास और अन्य योग्य चलने की लागत की रसीदें",
+      "नए स्कूल स्थान पर योग्य आय का प्रमाण",
+      "फॉर्म T1-M"
+    ],
+    "filing_destination": "आपके T1 रिटर्न की पंक्ति 21900; फॉर्म T1-M पूरा करें",
+    "fallback_explanation": "यदि आप कम से कम 40km स्कूल के करीब चले गए, तो हो सकता है कि आप चलने के खर्च काट सकें, लेकिन केवल नए स्थान पर योग्य कर योग्य छात्रवृत्ति या रोज़गार आय के विरुद्ध। कई पूर्णकालिक छात्र चलने के वर्ष में इस कटौती के लिए योग्य नहीं होते।",
+    "ui_priority": 50,
+    "tags": [
+      "moving",
+      "deduction",
+      "gotcha"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-21900-moving-expenses/you-claim-moving-expenses-6.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "gst_hst_credit",
+    "audience": "student",
+    "name": "GST/HST क्रेडिट",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "range",
+      "range_low": 0,
+      "range_high": 533,
+      "disclaimer": "एकल व्यक्ति के लिए अनुमानित अधिकतम; वास्तविक राशि आय, पारिवारिक स्थिति और लाभ वर्ष पर निर्भर करती है।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "age_19_or_older_by_april_2026",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "is_canadian_resident_for_tax",
+          "operator": "equals",
+          "value": "yes"
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "दाखिल 2024 कर रिटर्न",
+      "CRA My Account पहुँच या अद्यतन डाक पता",
+      "यदि वर्ष के दौरान कनाडा के निवासी बने तो फॉर्म RC151"
+    ],
+    "filing_destination": "2024 कर रिटर्न दाखिल करें; CRA अधिकांश दाखिलकर्ताओं के लिए GST/HST पात्रता स्वचालित रूप से आकलित करता है",
+    "fallback_explanation": "यदि आप कर उद्देश्यों के लिए कनाडा के निवासी हैं और लाभ अवधि तक 19 वर्ष के होंगे, तो अपना 2024 रिटर्न दाखिल करने से GST/HST क्रेडिट के लिए पंजीकरण हो सकता है—यह कम या शून्य आय पर भी मायने रख सकता है।",
+    "ui_priority": 60,
+    "tags": [
+      "refundable",
+      "benefit",
+      "file_even_with_no_income"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4210/gst-hst-credit.html",
+    "maintenance_note": "GST/HST amounts and thresholds should be verified each benefit year."
+  },
+  {
+    "id": "canada_training_credit",
+    "audience": "student",
+    "name": "Canada Training Credit",
+    "category": "federal",
+    "estimated_dollars": {
+      "type": "fixed",
+      "value": 250,
+      "disclaimer": "अधिकतम वार्षिक वापसी योग्य क्रेडिट। वास्तविक राशि आपकी Canada Training Credit Limit और योग्य ट्यूशन पर निर्भर करती है।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "paid_tuition_2024",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "has_t2202",
+          "operator": "equals",
+          "value": "yes"
+        },
+        {
+          "question_id": "has_canada_training_credit_limit",
+          "operator": "equals",
+          "value": "yes"
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "T2202 या योग्य ट्यूशन रसीद",
+      "आपकी Canada Training Credit Limit दिखाने वाली Notice of Assessment"
+    ],
+    "filing_destination": "आपके T1 रिटर्न की पंक्ति 45350",
+    "fallback_explanation": "यदि आपकी Notice of Assessment पर Canada Training Credit Limit है और आपने योग्य ट्यूशन का भुगतान किया है, तो हो सकता है कि आप वापसी योग्य क्रेडिट दावा कर सकें। यह परिपक्व छात्रों के लिए सबसे प्रासंगिक है क्योंकि सीमा आम तौर पर 26 वर्ष की उम्र से जमा होना शुरू होती है।",
+    "ui_priority": 70,
+    "tags": [
+      "education",
+      "refundable",
+      "mature_students"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-45350-canada-training-credit.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "file_to_register",
+    "audience": "student",
+    "name": "भविष्य के लाभों के लिए पंजीकरण हेतु रिटर्न दाखिल करें",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "कोई तत्काल अनुमान नहीं। दाखिल करना भविष्य की लाभ पात्रता निर्धारित करने में मदद कर सकता है।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "age_19_or_older_by_april_2026",
+          "operator": "equals",
+          "value": "no"
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "SIN",
+      "डाक पता",
+      "प्राप्त होने वाली कोई भी स्लिप, भले ही आय कम हो"
+    ],
+    "filing_destination": "कम या शून्य आय पर भी 2024 कर रिटर्न दाखिल करें",
+    "fallback_explanation": "यदि आप अभी GST/HST क्रेडिट के लिए पर्याप्त उम्र के नहीं हैं, तो भी रिटर्न दाखिल करने से CRA के पास भविष्य के लाभ भुगतानों के लिए आपकी जानकारी तैयार रहती है—कम आय पर भी अक्सर यह करना लायक है।",
+    "ui_priority": 80,
+    "tags": [
+      "procedural",
+      "benefits",
+      "file_even_with_no_income"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/gst-hst-credit/who-eligible.html",
+    "maintenance_note": ""
+  },
+  {
+    "id": "alberta_provincial_warning",
+    "audience": "student",
+    "name": "Alberta प्रांतीय ट्यूशन क्रेडिट चेतावनी",
+    "category": "procedural",
+    "estimated_dollars": {
+      "type": "not_estimated",
+      "value": null,
+      "disclaimer": "केवल सूचनात्मक ध्वज।"
+    },
+    "eligibility_rules": {
+      "all_of": [
+        {
+          "question_id": "province_of_residence_dec_31_2024",
+          "operator": "equals",
+          "value": "AB"
+        }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "documents_needed": [
+      "Notice of Assessment यदि आपके पास पुरानी अप्रयुक्त प्रांतीय ट्यूशन राशि है"
+    ],
+    "filing_destination": "अपना प्रांतीय कर फॉर्म और Notice of Assessment समीक्षा करें",
+    "fallback_explanation": "Alberta ने 2020 और बाद के कर वर्षों के लिए अपने प्रांतीय ट्यूशन और शिक्षा टैक्स क्रेडिट समाप्त कर दिए। आप अभी भी संघीय ट्यूशन क्रेडिट दावा कर सकते हैं, लेकिन TaxBridge को 2024 के लिए Alberta प्रांतीय ट्यूशन अनुमान नहीं जोड़ना चाहिए।",
+    "ui_priority": 90,
+    "tags": [
+      "alberta_specific",
+      "provincial",
+      "warning"
+    ],
+    "cra_source_url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/p105/p105-students-income-tax.html",
+    "maintenance_note": "Alberta tuition rules should be re-verified if this tool is maintained beyond tax year 2024."
+  }
+]

@@ -15,6 +15,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+html.lang-hi body {
+  font-family: var(--font-devanagari, var(--font-sans, ui-sans-serif)), sans-serif;
+}
+
 /* Typography utilities (CRAP: repetition + hierarchy) */
 .text-display {
   font-size: var(--text-display);

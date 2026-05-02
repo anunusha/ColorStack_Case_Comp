@@ -1,0 +1,505 @@
+[
+  {
+    "id": "has_impairment_12_months",
+    "audience": "dtc",
+    "order": 10,
+    "question_text": "क्या आपको शारीरिक या मानसिक स्वास्थ्य स्थिति है जो कम से कम 12 महीने तक रही है या रहने की उम्मीद है?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "dtc_marked_restriction",
+      "dtc_significant_restriction",
+      "dtc_life_sustaining_therapy"
+    ],
+    "ui_hints": {
+      "help_text": "CRA इसे दीर्घकालिक अक्षमता की आवश्यकता कहता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "category_of_restriction",
+    "audience": "dtc",
+    "order": 20,
+    "question_text": "इनमें से कौन सा वर्णन सबसे अच्छा बताता है कि आपकी स्थिति आपको कैसे प्रभावित करती है?",
+    "answer_type": "multi_select",
+    "options": [
+      {
+        "value": "marked",
+        "label": "कम से कम एक दैनिक गतिविधि को निश्चित रूप से सीमित करता है"
+      },
+      {
+        "value": "significant",
+        "label": "दो या अधिक दैनिक गतिविधियों को महत्वपूर्ण रूप से सीमित करता है; संयुक्त प्रभाव एक प्रमुख प्रतिबंध के बराबर"
+      },
+      {
+        "value": "life_sustaining_therapy",
+        "label": "जीवन रक्षक कार्य के लिए सप्ताह में कम से कम 14 घंटे चल रही थेरेपी की आवश्यकता है"
+      },
+      {
+        "value": "none",
+        "label": "उपरोक्त में से कोई नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_marked_restriction",
+      "dtc_significant_restriction",
+      "dtc_life_sustaining_therapy",
+      "consider_reapplication_federal"
+    ],
+    "ui_hints": {
+      "help_text": "CRA निदान के नाम के बजाय दैनिक कार्य पर ध्यान देता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "restriction_severity_90_percent",
+    "audience": "dtc",
+    "order": 30,
+    "question_text": "जब प्रतिबंध मौजूद हो, क्या यह आपके दिन का लगभग 90% समय, हर दिन, हर समय या लगभग हर समय मौजूद रहता है?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_marked_restriction",
+      "dtc_significant_restriction"
+    ],
+    "ui_hints": {
+      "help_text": "CRA \"हर समय या लगभग हर समय\" वाक्यांश का उपयोग करता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "inordinate_time_or_unable",
+    "audience": "dtc",
+    "order": 40,
+    "question_text": "उपचार, दवा या सहायक उपकरणों के बावजूद, क्या आप गतिविधि करने में असमर्थ हैं, या यह आपको बिना स्थिति वाले व्यक्ति की तुलना में काफी अधिक समय लेती है?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_marked_restriction"
+    ],
+    "ui_hints": {
+      "help_text": "CRA यह देखता है कि क्या गतिविधि असामान्य रूप से अधिक समय लेती है—अक्सर लगभग तीन गुना अधिक समय।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "years_with_condition",
+    "audience": "dtc",
+    "order": 50,
+    "question_text": "आपको यह स्थिति कितने वर्षों से है?",
+    "answer_type": "number",
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_retroactive_potential"
+    ],
+    "ui_hints": {
+      "placeholder": "अधिकतम 10",
+      "min": 0,
+      "max": 10,
+      "help_text": "अनुमोदन के बाद CRA पिछले वर्षों का पुनर्मूल्यांकन कर सकता है, लेकिन रिफंड कर देय कर पर निर्भर करता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_qualified_practitioner",
+    "audience": "dtc",
+    "order": 60,
+    "question_text": "क्या आपके पास कोई डॉक्टर, नर्स प्रैक्टिशनर, मनोवैज्ञानिक, ऑप्टोमेट्रिस्ट, ऑडियोलॉजिस्ट, ऑक्यूपेशनल थेरेपिस्ट, फिजियोथेरेपिस्ट, या स्पीच-लैंग्वेज पैथोलॉजिस्ट है जो आपकी स्थिति को अच्छी तरह जानता है?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "find_practitioner_first"
+    ],
+    "ui_hints": {
+      "help_text": "नर्स प्रैक्टिशनर सभी DTC खंडों को प्रमाणित कर सकते हैं—यह महत्वपूर्ण है यदि आपके पास फैमिली डॉक्टर नहीं है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_tax_payable_in_recent_years",
+    "audience": "dtc",
+    "order": 70,
+    "question_text": "पिछले 10 वर्षों में किसी भी वर्ष, क्या आप पर या आपका समर्थन करने वाले परिवार के सदस्य पर संघीय आयकर देय था?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_retroactive_potential",
+      "dtc_self_claim",
+      "dtc_transfer_to_supporter",
+      "rdsp_unlock"
+    ],
+    "ui_hints": {
+      "help_text": "DTC गैर-वापसी योग्य है, लेकिन यह समर्थन करने वाले परिवार के सदस्य को स्थानांतरित हो सकता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "interested_in_rdsp",
+    "audience": "dtc",
+    "order": 80,
+    "question_text": "क्या आप Registered Disability Savings Plan (RDSP) के बारे में जानना चाहते हैं? यह एक बचत योजना है जहाँ सरकार अनुदान और बॉन्ड दे सकती है, भले ही आप स्वयं योगदान न करें।",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "rdsp_unlock"
+    ],
+    "ui_hints": {
+      "help_text": "RDSP खोलने के लिए DTC अनुमोदन आवश्यक है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "applying_for_self_or_other",
+    "audience": "dtc",
+    "order": 90,
+    "question_text": "क्या आप अपने लिए, 18 से कम उम्र के बच्चे के लिए, या आपके द्वारा समर्थित किसी अन्य वयस्क के लिए आवेदन कर रहे हैं?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "myself",
+        "label": "अपने लिए"
+      },
+      {
+        "value": "my_child_under_18",
+        "label": "मेरा 18 से कम उम्र का बच्चा"
+      },
+      {
+        "value": "another_adult_i_support",
+        "label": "कोई अन्य वयस्क जिसे मैं समर्थन देता/देती हूँ"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "has_impairment_12_months",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "dtc_child_supplement",
+      "child_disability_benefit",
+      "dtc_transfer_to_supporter"
+    ],
+    "ui_hints": {
+      "help_text": "बच्चे और आश्रित दावों के लिए मार्गदर्शन वयस्क स्व-दावों से अलग होता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "province_of_residence",
+    "audience": "dtc",
+    "order": 100,
+    "question_text": "आप किस प्रांत या क्षेत्र में रहते हैं?",
+    "answer_type": "dropdown",
+    "options": [
+      {
+        "value": "AB",
+        "label": "Alberta"
+      },
+      {
+        "value": "BC",
+        "label": "British Columbia"
+      },
+      {
+        "value": "MB",
+        "label": "Manitoba"
+      },
+      {
+        "value": "NB",
+        "label": "New Brunswick"
+      },
+      {
+        "value": "NL",
+        "label": "Newfoundland and Labrador"
+      },
+      {
+        "value": "NS",
+        "label": "Nova Scotia"
+      },
+      {
+        "value": "NT",
+        "label": "Northwest Territories"
+      },
+      {
+        "value": "NU",
+        "label": "Nunavut"
+      },
+      {
+        "value": "ON",
+        "label": "Ontario"
+      },
+      {
+        "value": "PE",
+        "label": "Prince Edward Island"
+      },
+      {
+        "value": "Quebec",
+        "label": "Quebec"
+      },
+      {
+        "value": "SK",
+        "label": "Saskatchewan"
+      },
+      {
+        "value": "YT",
+        "label": "Yukon"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "dtc_marked_restriction",
+      "dtc_significant_restriction",
+      "dtc_life_sustaining_therapy",
+      "aish_cdb_warning"
+    ],
+    "ui_hints": {
+      "help_text": "प्रांत अनुपूरक अनुमानों और Alberta-विशिष्ट AISH/CDB संदेशों को प्रभावित करता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "currently_receives_disability_benefits",
+    "audience": "dtc",
+    "order": 110,
+    "question_text": "क्या आप वर्तमान में इनमें से कोई प्राप्त करते हैं?",
+    "answer_type": "multi_select",
+    "options": [
+      {
+        "value": "aish",
+        "label": "AISH (Alberta)"
+      },
+      {
+        "value": "cpp_d",
+        "label": "CPP-D (Canada Pension Plan disability)"
+      },
+      {
+        "value": "provincial_disability_assistance",
+        "label": "प्रांतीय विकलांगता सहायता (अन्य प्रांत)"
+      },
+      {
+        "value": "workers_compensation",
+        "label": "श्रमिक मुआवजा"
+      },
+      {
+        "value": "private_disability_insurance",
+        "label": "निजी विकलांगता बीमा"
+      },
+      {
+        "value": "cdb",
+        "label": "Canada Disability Benefit (CDB)"
+      },
+      {
+        "value": "none",
+        "label": "कोई नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "aish_cdb_warning",
+      "aish_reapplication_required"
+    ],
+    "ui_hints": {
+      "help_text": "अन्य विकलांगता लाभ स्वचालित रूप से आपको DTC योग्य नहीं बनाते, और उन्हें न प्राप्त करना आपको अयोग्य नहीं बनाता।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "previously_denied",
+    "audience": "dtc",
+    "order": 120,
+    "question_text": "क्या आपने पहले DTC के लिए आवेदन किया और अस्वीकार हो गए?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "consider_reapplication_federal",
+      "aish_reapplication_required"
+    ],
+    "ui_hints": {
+      "help_text": "2022 में संघीय नियम बदले और Alberta में कुछ AISH प्राप्तकर्ताओं के लिए पुनः आवेदन नियम विशिष्ट हैं।"
+    },
+    "follow_ups": [
+      "denial_year"
+    ]
+  },
+  {
+    "id": "denial_year",
+    "audience": "dtc",
+    "order": 125,
+    "question_text": "आपका DTC अस्वीकार कब हुआ था?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "before_2022",
+        "label": "2022 से पहले"
+      },
+      {
+        "value": "2022_to_2024",
+        "label": "2022-2024"
+      },
+      {
+        "value": "2025_or_later",
+        "label": "2025 या बाद में"
+      },
+      {
+        "value": "dont_remember",
+        "label": "याद नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "previously_denied",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "consider_reapplication_federal",
+      "aish_reapplication_required"
+    ],
+    "ui_hints": {
+      "help_text": "अस्वीकार का वर्ष संघीय नियम परिवर्तनों को Alberta AISH पुनः आवेदन आवश्यकताओं से अलग करने में मदद करता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_employment_income_2024",
+    "audience": "dtc",
+    "order": 130,
+    "question_text": "क्या आपके पास 2024 में कोई रोज़गार या स्वरोज़गार आय थी?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "cwb_disability_supplement"
+    ],
+    "ui_hints": {
+      "help_text": "केवल काम की आय Canada Workers Benefit विकलांगता अनुपूरक के लिए पर्याप्त नहीं है; CRA आय, परिवार की स्थिति, प्रांत और छात्र исключения लागू करता है।"
+    },
+    "follow_ups": []
+  }
+]

@@ -1,6 +1,27 @@
 export function buildCreditExplanationPrompt(credit, userContext = {}) {
+  const lang = userContext.lang === "hi" ? "hi" : "en";
   const estimate = credit.computed_estimate?.display ?? formatEstimate(credit);
-  const answersSummary = formatAnswers(userContext.answers);
+  const answersSummary = formatAnswers(userContext.answers, lang);
+
+  if (lang === "hi") {
+    return `आप एक कनाडाई करदाता की मदद कर रहे हैं जो संभावित कर क्रेडिट को समझना चाहता है।
+
+दर्शक: ${userContext.audience ?? credit.audience ?? "अज्ञात"}
+क्रेडिट नाम: ${credit.name}
+अनुमानित मूल्य: ${estimate}
+दाखिल स्थान: ${credit.filing_destination}
+आवश्यक दस्तावेज़: ${credit.documents_needed?.join(", ") || "सूचीबद्ध नहीं"}
+फॉलबैक व्याख्या: ${credit.fallback_explanation}
+उपयोगकर्ता के उत्तर:
+${answersSummary}
+
+2 से 3 छोटे वाक्यों में लिखें। सावधान और गैर-निश्चित रहें: यह "लागू हो सकता है" कहें, यह नहीं कि निश्चित लागू होता है। जहाँ संभव हो कर jargon से बचें। अंत में एक ठोस "अगला कदम" बताएँ। उल्लेख न करें कि आप AI हैं।
+
+भाषा:
+- पूरा उत्तर हिन्दी में दें। औपचारिक "आप" का प्रयोग करें।
+- CRA, T2202, T2201, GST/HST, RRSP, RDSP, NETFILE, CVITP जैसी संक्षिप्त नाम अंग्रेज़ी में रखें।
+- राशियों के लिए $ प्रतीक रखें।`;
+  }
 
   return `You are helping a Canadian taxpayer understand a possible tax credit in plain English.
 
@@ -51,11 +72,11 @@ function formatEstimate(credit) {
   return "Not estimated";
 }
 
-function formatAnswers(answers = {}) {
+function formatAnswers(answers = {}, lang = "en") {
   const entries = Object.entries(answers);
 
   if (entries.length === 0) {
-    return "- No answers provided";
+    return lang === "hi" ? "- कोई उत्तर प्रदान नहीं" : "- No answers provided";
   }
 
   return entries

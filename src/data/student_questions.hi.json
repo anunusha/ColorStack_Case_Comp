@@ -1,0 +1,438 @@
+[
+  {
+    "id": "paid_tuition_2024",
+    "audience": "student",
+    "order": 10,
+    "question_text": "क्या आपने 2024 में योग्य ट्यूशन फीस का भुगतान किया?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "tuition_credit",
+      "canada_training_credit",
+      "tuition_transfer",
+      "tuition_carryforward"
+    ],
+    "ui_hints": {
+      "help_text": "योग्य ट्यूशन आम तौर पर आपके T2202 फॉर्म पर दिखाई देती है और प्रति संस्थान आम तौर पर कम से कम $100 होनी चाहिए।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "tuition_amount_paid",
+    "audience": "student",
+    "order": 20,
+    "question_text": "आपने लगभग कितनी योग्य ट्यूशन का भुगतान किया?",
+    "answer_type": "number",
+    "required": true,
+    "conditional_on": {
+      "question_id": "paid_tuition_2024",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "tuition_credit",
+      "tuition_transfer",
+      "tuition_carryforward"
+    ],
+    "ui_hints": {
+      "placeholder": "उदाहरण: 6000",
+      "min": 0,
+      "help_text": "संघीय ट्यूशन क्रेडिट आम तौर पर योग्य ट्यूशन का 15% माना जाता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_t2202",
+    "audience": "student",
+    "order": 30,
+    "question_text": "क्या आपके स्कूल ने आपको T2202 दिया, या विदेश में पढ़ाई के लिए TL11 फॉर्म?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "paid_tuition_2024",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "tuition_credit",
+      "tuition_transfer",
+      "tuition_carryforward",
+      "canada_training_credit"
+    ],
+    "ui_hints": {
+      "help_text": "कनाडाई स्कूल आम तौर पर फरवरी के अंत तक छात्र पोर्टल के माध्यम से T2202 जारी करते हैं।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "studied_outside_canada",
+    "audience": "student",
+    "order": 40,
+    "question_text": "क्या आपने 2024 में कनाडा के बाहर किसी संस्थान में पढ़ाई की?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "tuition_credit",
+      "moving_expenses_deduction"
+    ],
+    "ui_hints": {
+      "help_text": "यह इस बात से संबंधित है कि ट्यूशन योग्यता के नियम क्या हैं, इससे नहीं कि आप छात्र गिने जाते हैं या नहीं।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "had_tax_payable_2024",
+    "audience": "student",
+    "order": 50,
+    "question_text": "क्या 2024 में आपको रिफंड मिला या कर देना पड़ा? यदि आप निश्चित नहीं हैं, तो क्या आपके पास रोज़गार आय या महत्वपूर्ण कर योग्य छात्रवृत्ति आय थी?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "got_refund",
+        "label": "रिफंड मिला"
+      },
+      {
+        "value": "owed_taxes",
+        "label": "कर देना पड़ा"
+      },
+      {
+        "value": "not_sure_with_income",
+        "label": "निश्चित नहीं, और मेरे पास रोज़गार या महत्वपूर्ण कर योग्य छात्रवृत्ति आय थी"
+      },
+      {
+        "value": "not_sure_low_income",
+        "label": "निश्चित नहीं, और मेरी आय बहुत कम या शून्य के करीब थी"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "tuition_credit",
+      "tuition_transfer",
+      "tuition_carryforward"
+    ],
+    "ui_hints": {
+      "help_text": "रिफंड का मतलब हमेशा यह नहीं कि आप पर कोई कर देय नहीं था। ट्यूशन क्रेडिट का उपयोग जाँचने के लिए Schedule 11 या अपनी Notice of Assessment देखें।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "paid_student_loan_interest",
+    "audience": "student",
+    "order": 60,
+    "question_text": "क्या आपने 2024 में या पिछले 5 वर्षों में किसी भी वर्ष सरकारी छात्र ऋण पर ब्याज चुकाया?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "student_loan_interest_credit"
+    ],
+    "ui_hints": {
+      "help_text": "निजी बैंक लाइन ऑफ़ क्रेडिट या व्यक्तिगत ऋण पर ब्याज योग्य नहीं होता।"
+    },
+    "follow_ups": [
+      "student_loan_interest_amount"
+    ]
+  },
+  {
+    "id": "student_loan_interest_amount",
+    "audience": "student",
+    "order": 65,
+    "question_text": "आपने लगभग कितना योग्य छात्र ऋण ब्याज चुकाया? यदि निश्चित नहीं हैं तो इसे खाली छोड़ें—हम आपको NSLSC ब्याज विवरण की ओर इशारा करेंगे।",
+    "answer_type": "number",
+    "required": false,
+    "conditional_on": {
+      "question_id": "paid_student_loan_interest",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "student_loan_interest_credit"
+    ],
+    "ui_hints": {
+      "placeholder": "उदाहरण: 120",
+      "min": 0
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "moved_for_school",
+    "audience": "student",
+    "order": 70,
+    "question_text": "क्या आपने 2024 में अपने स्कूल के कम से कम 40km करीब चले गए?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "moving_expenses_deduction"
+    ],
+    "ui_hints": {
+      "help_text": "छात्र केवल तभी चलने का खर्च काट सकते हैं जब चाल कम से कम 40km करीब हो और अन्य आय नियम पूरे हों।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "income_at_new_school_location",
+    "audience": "student",
+    "order": 80,
+    "question_text": "नए स्कूल स्थान पर, क्या आपके पास निम्नलिखित में से कोई था?",
+    "answer_type": "multi_select",
+    "options": [
+      {
+        "value": "taxable_scholarship",
+        "label": "कर योग्य छात्रवृत्ति, अनुदान, फेलोशिप, या शोध अनुदान आय"
+      },
+      {
+        "value": "employment_or_self_employment",
+        "label": "अंशकालिक नौकरी, को-ऑप, या स्वरोज़गार आय"
+      },
+      {
+        "value": "neither",
+        "label": "कोई नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": {
+      "question_id": "moved_for_school",
+      "answer_value": "yes"
+    },
+    "affects_credits": [
+      "moving_expenses_deduction"
+    ],
+    "ui_hints": {
+      "help_text": "यह आम समस्या है: चलने का खर्च केवल नए स्थान से जुड़ी योग्य आय के विरुद्ध ही काटा जा सकता है।"
+    },
+    "follow_ups": [
+      "new_location_income_amount"
+    ]
+  },
+  {
+    "id": "new_location_income_amount",
+    "audience": "student",
+    "order": 85,
+    "question_text": "नए स्कूल स्थान पर आपने लगभग कितनी रोज़गार या स्वरोज़गार आय कमाई?",
+    "answer_type": "number",
+    "required": false,
+    "conditional_on": {
+      "question_id": "income_at_new_school_location",
+      "answer_value": "employment_or_self_employment"
+    },
+    "affects_credits": [
+      "moving_expenses_deduction"
+    ],
+    "ui_hints": {
+      "placeholder": "उदाहरण: 3000",
+      "min": 0,
+      "help_text": "चलने के खर्च की कटौती नए स्थान पर योग्य आय तक सीमित होती है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "age_19_or_older_by_april_2026",
+    "audience": "student",
+    "order": 90,
+    "question_text": "क्या आप अप्रैल 2026 तक 19 वर्ष या उससे अधिक उम्र के होंगे?",
+    "answer_type": "yes_no",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "gst_hst_credit",
+      "file_to_register"
+    ],
+    "ui_hints": {
+      "help_text": "जो लोग अप्रैल 2026 से पहले 19 वर्ष के हो जाते हैं, उन्हें GST/HST क्रेडिट के लिए विचार में लिए जाने हेतु 2024 रिटर्न दाखिल करना चाहिए।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "is_canadian_resident_for_tax",
+    "audience": "student",
+    "order": 100,
+    "question_text": "क्या आप कर उद्देश्यों के लिए कनाडा के निवासी हैं?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "gst_hst_credit",
+      "tuition_credit"
+    ],
+    "ui_hints": {
+      "help_text": "कर उद्देश्यों के लिए निवास लाभ पात्रता को प्रभावित करता है। यदि अनिश्चित हैं, तो CRA फॉर्म NR74 आपकी स्थिति निर्धारित करने में मदद कर सकता है।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "has_canada_training_credit_limit",
+    "audience": "student",
+    "order": 110,
+    "question_text": "क्या आपने पिछली CRA Notice of Assessment पर Canada Training Credit limit जमा किया है?",
+    "answer_type": "single_select",
+    "options": [
+      {
+        "value": "yes",
+        "label": "हाँ"
+      },
+      {
+        "value": "no",
+        "label": "नहीं"
+      },
+      {
+        "value": "unsure",
+        "label": "अनिश्चित"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "canada_training_credit"
+    ],
+    "ui_hints": {
+      "help_text": "यह आम तौर पर 26 से 66 से कम उम्र के परिपक्व छात्रों के लिए प्रासंगिक है। अपनी नवीनतम CRA Notice of Assessment पर अपना CTCL देखें।"
+    },
+    "follow_ups": []
+  },
+  {
+    "id": "province_of_residence_dec_31_2024",
+    "audience": "student",
+    "order": 120,
+    "question_text": "31 दिसंबर, 2024 को आप किस प्रांत या क्षेत्र में रहते थे?",
+    "answer_type": "dropdown",
+    "options": [
+      {
+        "value": "AB",
+        "label": "Alberta"
+      },
+      {
+        "value": "BC",
+        "label": "British Columbia"
+      },
+      {
+        "value": "MB",
+        "label": "Manitoba"
+      },
+      {
+        "value": "NB",
+        "label": "New Brunswick"
+      },
+      {
+        "value": "NL",
+        "label": "Newfoundland and Labrador"
+      },
+      {
+        "value": "NS",
+        "label": "Nova Scotia"
+      },
+      {
+        "value": "NT",
+        "label": "Northwest Territories"
+      },
+      {
+        "value": "NU",
+        "label": "Nunavut"
+      },
+      {
+        "value": "ON",
+        "label": "Ontario"
+      },
+      {
+        "value": "PE",
+        "label": "Prince Edward Island"
+      },
+      {
+        "value": "QC",
+        "label": "Quebec"
+      },
+      {
+        "value": "SK",
+        "label": "Saskatchewan"
+      },
+      {
+        "value": "YT",
+        "label": "Yukon"
+      }
+    ],
+    "required": true,
+    "conditional_on": null,
+    "affects_credits": [
+      "tuition_credit",
+      "alberta_provincial_warning"
+    ],
+    "ui_hints": {
+      "help_text": "31 दिसंबर को निवास का प्रांत यह तय करता है कि कौन से प्रांतीय क्रेडिट लागू हो सकते हैं।"
+    },
+    "follow_ups": []
+  }
+]

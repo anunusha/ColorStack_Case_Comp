@@ -8,7 +8,11 @@ import { callGroqChat, getGroqText } from "@/lib/groqClient";
 
 const MAX_HISTORY_MESSAGES = 20;
 
-function withDisclaimer(message) {
+function withDisclaimer(message, lang = "en") {
+  if (lang === "hi") {
+    return `${message} मैं मार्गदर्शन उपकरण हूँ, कर पेशेवर नहीं। जटिल स्थितियों के लिए CVITP स्वयंसेवक या सीधे CRA से संपर्क करें।`;
+  }
+
   return `${message} I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.`;
 }
 
@@ -24,7 +28,8 @@ export async function POST(request) {
     );
   }
 
-  const { question, audience, messages = [] } = payload ?? {};
+  const { question, audience, messages = [], lang: langRaw } = payload ?? {};
+  const lang = langRaw === "hi" ? "hi" : "en";
 
   if (!question?.question_text || !audience) {
     return NextResponse.json(
@@ -49,19 +54,34 @@ export async function POST(request) {
     })
     .join("\n");
 
+  const fallbackNoApi =
+    lang === "hi"
+      ? withDisclaimer(
+          "अभी लाइव सहायता लोड नहीं हो सकी, लेकिन यह प्रश्न CRA शब्दों के आधार पर आपकी सबसे उपयुक्त स्थिति पूछ रहा है। वह विकल्प चुनें जो लगातार सबसे अधिक सही हो।",
+          "hi"
+        )
+      : withDisclaimer(
+          "I cannot load live help right now, but this question is asking for your best-fit situation based on CRA wording. Choose the option that is most consistently true for you.",
+          "en"
+        );
+
   if (!process.env.GROQ_API_KEY) {
     return NextResponse.json({
-      reply:
-        "I cannot load live help right now, but this question is asking for your best-fit situation based on CRA wording. Choose the option that is most consistently true for you. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.",
+      reply: fallbackNoApi,
       source: "fallback",
     });
   }
 
   try {
-    const systemPrompt = `${buildHelpBotSystemPrompt(question, audience)}
+    const defaultConversationSeed =
+      lang === "hi"
+        ? "user: कृपया इस प्रश्न को सरल भाषा में समझाएँ।"
+        : "user: Please explain this question in simple terms.";
+
+    const systemPrompt = `${buildHelpBotSystemPrompt(question, audience, lang)}
 
 Conversation so far:
-${conversationText || "user: Please explain this question in simple terms."}
+${conversationText || defaultConversationSeed}
 
 Respond to the latest user message only.`;
     const groqMessages = [
@@ -83,12 +103,18 @@ Respond to the latest user message only.`;
         rateLimitReset: result.data?.rateLimitReset ?? null,
         errorBody: result.data?.errorBody ?? null,
       });
-      return NextResponse.json({
-        reply: withDisclaimer(
-          "I am getting a lot of requests right now. Please wait about 20-30 seconds and ask again, or continue with the next question for now."
-        ),
-        source: "rate_limited",
-      }, { status: 429 });
+      return NextResponse.json(
+        {
+          reply: withDisclaimer(
+            lang === "hi"
+              ? "अभी बहुत अनुरोध आ रहे हैं। कृपया लगभग 20-30 सेकंड प्रतीक्षा करें और फिर पूछें, या अभी अगले प्रश्न पर जारी रखें।"
+              : "I am getting a lot of requests right now. Please wait about 20-30 seconds and ask again, or continue with the next question for now.",
+            lang
+          ),
+          source: "rate_limited",
+        },
+        { status: 429 }
+      );
     }
 
     if (!result.ok) {
@@ -99,7 +125,10 @@ Respond to the latest user message only.`;
       });
       return NextResponse.json({
         reply: withDisclaimer(
-          "I could not process that right now. Try using the helper text on this question and choose the option that best matches your situation today."
+          lang === "hi"
+            ? "अभी इसे प्रोसेस नहीं कर सका। इस प्रश्न पर सहायक टेक्स्ट का उपयोग करें और आज जो स्थिति सबसे अधिक मेल खाती है वह विकल्प चुनें।"
+            : "I could not process that right now. Try using the helper text on this question and choose the option that best matches your situation today.",
+          lang
         ),
         source: "fallback",
       });
@@ -109,7 +138,10 @@ Respond to the latest user message only.`;
     if (!reply) {
       return NextResponse.json({
         reply: withDisclaimer(
-          "I couldn't generate a response. Try rephrasing your question in simpler terms."
+          lang === "hi"
+            ? "मैं उत्तर नहीं बना पाया। अपना प्रश्न सरल शब्दों में फिर से लिखकर देखें।"
+            : "I couldn't generate a response. Try rephrasing your question in simpler terms.",
+          lang
         ),
         source: "empty_text",
       });
@@ -120,8 +152,12 @@ Respond to the latest user message only.`;
     console.error("Question help request failed.", error);
 
     return NextResponse.json({
-      reply:
-        "I could not process that right now. Try using the helper text on this question and choose the option that best matches your situation today. I'm a guidance tool, not a tax professional. For complex situations, contact a CVITP volunteer or the CRA directly.",
+      reply: withDisclaimer(
+        lang === "hi"
+          ? "अभी इसे प्रोसेस नहीं कर सका। इस प्रश्न पर सहायक टेक्स्ट का उपयोग करें और आज जो स्थिति सबसे अधिक मेल खाती है वह विकल्प चुनें।"
+          : "I could not process that right now. Try using the helper text on this question and choose the option that best matches your situation today.",
+        lang
+      ),
       source: "fallback",
     });
   }

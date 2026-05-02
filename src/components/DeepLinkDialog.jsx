@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
 
 export default function DeepLinkDialog({
   modalKey,
@@ -21,6 +22,7 @@ export default function DeepLinkDialog({
   onConfirm,
   children,
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -57,12 +59,15 @@ export default function DeepLinkDialog({
           </DialogHeader>
           <DialogFooter>
             <Button onClick={() => setModalState(false)} variant="outline">
-              Cancel
+              {t("deepLink.cancel")}
             </Button>
             <Button
-              onClick={() => {
-                onConfirm();
-                setModalState(false);
+              onClick={async () => {
+                try {
+                  await Promise.resolve(onConfirm?.());
+                } finally {
+                  setModalState(false);
+                }
               }}
             >
               {confirmLabel}
